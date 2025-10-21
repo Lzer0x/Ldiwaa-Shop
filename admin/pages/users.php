@@ -21,7 +21,7 @@ if (isset($_GET['toggle'])) {
 $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<link rel="stylesheet" href="../assets/css/admin_users.css">
+<!-- Using unified admin.css from admin.php -->
 
 <div class="container mt-5 mb-5">
   <div class="card shadow border-0">
@@ -39,7 +39,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll(
       <?php else: ?>
         <div class="table-responsive">
           <table class="table table-hover align-middle text-center">
-            <thead class="table-dark">
+            <thead class="table-light">
               <tr>
                 <th>ID</th>
                 <th>ชื่อผู้ใช้</th>

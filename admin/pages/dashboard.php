@@ -60,8 +60,7 @@ try {
 }
 ?>
 
-<link rel="stylesheet" href="../assets/css/admin_dashboard.css">
-<link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+<!-- Using unified admin.css from admin.php -->
 
 
 <div class="main-header">
@@ -103,7 +102,7 @@ try {
       <div class="content-card-header">
         ภาพรวมยอดขายรายเดือน (12 เดือนล่าสุด)
       </div>
-      <div class="content-card-body">
+      <div class="content-card-body1" style="height: 400px;">
         <canvas id="salesChart"></canvas>
       </div>
     </div>

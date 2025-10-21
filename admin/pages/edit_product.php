@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
 }
 ?>
 
-<link rel="stylesheet" href="../assets/css/admin_add_product.css">
+<!-- Using unified admin.css from admin.php -->
 
 <div class="container mt-5 mb-5">
   <div class="card shadow border-0">

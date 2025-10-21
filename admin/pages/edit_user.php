@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<link rel="stylesheet" href="../assets/css/admin_edit_user.css">
+<!-- Using unified admin.css from admin.php -->
 
 <div class="container mt-5 mb-5" style="max-width:700px;">
   <div class="card shadow border-0">

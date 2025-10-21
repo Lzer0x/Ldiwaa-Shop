@@ -13,8 +13,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 
 // โหลด CSS หลักและ Font
 ?>
-<link rel="stylesheet" href="../assets/css/admin_dashboard.css">
-<link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/admin.css">
 
 <div class="admin-wrapper">
 

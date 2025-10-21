@@ -27,7 +27,7 @@ $stmt = $conn->query("SELECT p.*, c.name_th AS category_name, MIN(pp.price_thb) 
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<link rel="stylesheet" href="../assets/css/admin_products.css">
+<!-- Using unified admin.css from admin.php -->
 
 <div class="container mt-5 mb-5">
   <div class="card shadow-sm border-0">
@@ -42,7 +42,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
       <div class="table-responsive">
         <table class="table table-hover align-middle text-center">
-          <thead class="table-dark">
+          <thead class="table-light">
             <tr>
               <th>#</th>
               <th>ภาพ</th>

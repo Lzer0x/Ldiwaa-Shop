@@ -55,7 +55,7 @@ foreach ($orders as &$oRow) {
 unset($oRow);
 ?>
 
-<link rel="stylesheet" href="../assets/css/admin_orders.css">
+<!-- Using unified admin.css from admin.php -->
 
 <div class="container mt-5 mb-5" style="max-width:1100px;">
   <div class="card shadow-sm border-0">
@@ -81,7 +81,7 @@ unset($oRow);
 
       <div class="table-responsive">
         <table class="table table-striped table-hover align-middle text-center">
-          <thead class="table-dark">
+          <thead class="table-light">
             <tr>
               <th>#</th>
               <th>ผู้สั่งซื้อ</th>
