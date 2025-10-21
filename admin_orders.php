@@ -65,7 +65,10 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="card shadow-sm border-0">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">📦 ระบบจัดการคำสั่งซื้อ</h4>
-      <a href="index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
+      <div>
+        <a href="admin/admin_dashboard.php" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a>
+        <a href="index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
+      </div>
     </div>
 
     <div class="card-body">
