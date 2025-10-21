@@ -2,6 +2,7 @@
 session_start();
 include 'includes/db_connect.php';
 include 'includes/header.php';
+require_once 'includes/redeem_service.php';
 
 // 🧩 ตรวจสิทธิ์ผู้ดูแลระบบ
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -15,9 +16,17 @@ if (isset($_POST['action'])) {
   $order_id = $_POST['order_id'];
 
   if ($_POST['action'] === 'mark_paid') {
-    $conn->prepare("UPDATE orders SET payment_status='paid', order_status='completed' WHERE order_id=?")->execute([$order_id]);
+    $conn->prepare("UPDATE orders SET payment_status='paid' WHERE order_id=?")->execute([$order_id]);
     $conn->prepare("UPDATE payments SET status='verified' WHERE order_id=?")->execute([$order_id]);
-    header("Location: admin_orders.php?msg=paid");
+
+    $assign = assignRedeemKeys($conn, (int)$order_id);
+    if (!empty($assign['success'])) {
+      $conn->prepare("UPDATE orders SET order_status='completed' WHERE order_id=?")->execute([$order_id]);
+      header("Location: admin_orders.php?msg=paid_assigned");
+    } else {
+      $conn->prepare("UPDATE orders SET order_status='processing' WHERE order_id=?")->execute([$order_id]);
+      header("Location: admin_orders.php?msg=paid_pending");
+    }
     exit;
   }
 
@@ -66,7 +75,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">📦 ระบบจัดการคำสั่งซื้อ</h4>
       <div>
-        <a href="admin/admin_dashboard.php" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a>
+        <a href="admin_dashboard.php" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a>
         <a href="index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
       </div>
     </div>
@@ -80,6 +89,12 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php elseif ($_GET['msg'] === 'cancelled'): ?>
           <div class="alert alert-danger text-center">❌ ยกเลิกคำสั่งซื้อเรียบร้อย</div>
         <?php endif; ?>
+      <?php endif; ?>
+
+      <?php if (isset($_GET['msg']) && $_GET['msg'] === 'paid_assigned'): ?>
+        <div class="alert alert-success text-center">ทำเครื่องหมายชำระเงินแล้ว และแจกคีย์เรียบร้อย</div>
+      <?php elseif (isset($_GET['msg']) && $_GET['msg'] === 'paid_pending'): ?>
+        <div class="alert alert-warning text-center">ทำเครื่องหมายชำระเงินแล้ว แต่คีย์ไม่เพียงพอ ระบบตั้งสถานะ Processing</div>
       <?php endif; ?>
 
       <div class="table-responsive">
