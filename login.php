@@ -5,14 +5,16 @@ include 'includes/header.php';
 
 // ตรวจสอบว่ามีการส่งฟอร์มหรือไม่
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
+  // รับค่า identifier ที่อาจจะเป็น username หรือ email
+  $identifier = trim($_POST['email'] ?? '');
+  $password = $_POST['password'] ?? '';
 
-    if ($email === '' || $password === '') {
-        $error = "กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน";
-    } else {
-        $stmt = $conn->prepare("SELECT user_id, username, email, password, role, status FROM users WHERE email = ? LIMIT 1");
-        $stmt->execute([$email]);
+  if ($identifier === '' || $password === '') {
+    $error = "กรุณากรอกอีเมลหรือชื่อผู้ใช้ และรหัสผ่านให้ครบถ้วน";
+  } else {
+    // คิวรีหา user ตาม email หรือ username
+    $stmt = $conn->prepare("SELECT user_id, username, email, password, role, status FROM users WHERE email = ? OR username = ? LIMIT 1");
+    $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
@@ -81,9 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <form method="post" action="login.php" autocomplete="off" novalidate>
         <div class="mb-3">
-          <label for="email" class="form-label">อีเมล</label>
-          <input type="email" id="email" name="email" class="form-control"
-                 required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+          <label for="email" class="form-label">อีเมลหรือชื่อผู้ใช้</label>
+          <input type="text" id="email" name="email" class="form-control"
+                 required placeholder="อีเมลหรือชื่อผู้ใช้" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
         </div>
 
         <div class="mb-3">
