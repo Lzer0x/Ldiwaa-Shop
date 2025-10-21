@@ -1,5 +1,32 @@
+$php_start = "<?php";
 <?php
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
+// Secure session cookie params (set before session_start)
+$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+$cookieParams = [
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => $_SERVER['HTTP_HOST'] ?? '',
+  'secure' => $secure,
+  'httponly' => true,
+  'samesite' => 'Lax'
+];
+if (session_status() === PHP_SESSION_NONE) {
+  // session_set_cookie_params() accepts an array on PHP 7.3+
+  if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 70300) {
+    session_set_cookie_params($cookieParams);
+  } else {
+    // fallback for older PHP: set without samesite support
+    session_set_cookie_params(
+      $cookieParams['lifetime'],
+      $cookieParams['path'],
+      $cookieParams['domain'],
+      $cookieParams['secure'],
+      $cookieParams['httponly']
+    );
+    // samesite cannot be reliably set on very old PHP versions; consider upgrading PHP
+  }
+  session_start();
+}
 $total_items = 0;
 if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
   foreach ($_SESSION['cart'] as $it) { $total_items += (int)$it['quantity']; }
