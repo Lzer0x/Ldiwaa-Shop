@@ -30,16 +30,16 @@ if (isset($_GET['toggle'])) {
   exit;
 }
 
-// ✅ ดึงข้อมูลสินค้า
-$stmt = $conn->query("
-  SELECT 
+// ✅ ดึงข้อมูลสินค้า พร้อมชื่อหมวดหมู่
+$stmt = $conn->query("SELECT 
     p.*, 
+  c.name_th AS category_name,
     MIN(pp.price_thb) AS min_price
   FROM products p
+  LEFT JOIN categories c ON p.category_id = c.category_id
   LEFT JOIN product_prices pp ON p.product_id = pp.product_id
   GROUP BY p.product_id
-  ORDER BY p.created_at DESC
-");
+  ORDER BY p.created_at DESC");
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -77,7 +77,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= $p['product_id'] ?></td>
                 <td><img src="<?= htmlspecialchars($p['image_url'] ?: 'images/sample_product.jpg') ?>" width="60" height="60" style="border-radius:8px;object-fit:cover;"></td>
                 <td><?= htmlspecialchars($p['name']) ?></td>
-                <td><?= htmlspecialchars($p['category'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($p['category_name'] ?? '-') ?></td>
                 <td>฿<?= number_format($p['min_price'], 2) ?></td>
                 <td>
                   <?php if ($p['status'] === 'active'): ?>

@@ -3,6 +3,7 @@ session_start();
 require_once 'includes/auth_user.php';
 include 'includes/db_connect.php';
 include 'includes/header.php';
+include 'includes/csrf.php';
 
 // ✅ ตรวจสอบสิทธิ์แอดมิน
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -13,8 +14,15 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 
 // ✅ เมื่อกด “เพิ่มสินค้า”
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // CSRF verify
+  if (!csrf_verify($_POST['csrf'] ?? '')) {
+    echo "<div class='alert alert-danger text-center'>❌ CSRF token ไม่ถูกต้อง</div>";
+    include 'includes/footer.php';
+    exit;
+  }
+
   $name = trim($_POST['name']);
-  $category = trim($_POST['category']);
+  $category_id = intval($_POST['category_id']);
   $region = trim($_POST['region']);
   $short_desc = trim($_POST['short_desc']);
   $description = trim($_POST['description']);
@@ -37,9 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->beginTransaction();
 
     // ✅ 1. เพิ่มสินค้าหลัก
-    $stmt = $conn->prepare("INSERT INTO products (category, name, short_desc, description, image_url, region, status, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-$stmt->execute([$category, $name, $short_desc, $description, $image_path, $region, $status]);
+  $stmt = $conn->prepare("INSERT INTO products (category_id, name, short_desc, description, image_url, region, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+  $stmt->execute([$category_id, $name, $short_desc, $description, $image_path, $region, $status]);
 
     $product_id = $conn->lastInsertId();
 
@@ -75,6 +83,7 @@ $stmt->execute([$category, $name, $short_desc, $description, $image_path, $regio
     </div>
     <div class="card-body">
       <form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
 
         <div class="row g-3">
           <div class="col-md-6">
@@ -82,8 +91,16 @@ $stmt->execute([$category, $name, $short_desc, $description, $image_path, $regio
             <input type="text" name="name" class="form-control" required>
           </div>
           <div class="col-md-6">
-  <label class="form-label">หมวดหมู่</label>
-  <input type="text" name="category" class="form-control" placeholder="เช่น Game / Wallet / Gift Card" required>
+            <label class="form-label">หมวดหมู่</label>
+            <select name="category_id" class="form-select" required>
+              <option value="">เลือกหมวดหมู่</option>
+              <?php
+                $cats = $conn->query("SELECT category_id, name_th AS name FROM categories ORDER BY sort_order ASC")->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($cats as $ct) {
+                  echo '<option value="'.(int)$ct['category_id'].'">'.htmlspecialchars($ct['name']).'</option>';
+                }
+              ?>
+            </select>
 </div>
 
           <div class="col-md-6">

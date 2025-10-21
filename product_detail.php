@@ -42,6 +42,8 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <form method="POST" action="cart_action.php" id="packageForm">
+  <?php include 'includes/csrf.php'; ?>
+  <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
   <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
   <input type="hidden" name="package_id" id="selected_package">
 

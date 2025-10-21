@@ -3,23 +3,23 @@ session_start();
 include 'includes/db_connect.php';
 include 'includes/header.php';
 
-// ✅ รับค่าจาก URL (q มาจากช่องค้นหาใน header)
-$category = $_GET['category'] ?? '';
+// ✅ เชื่อมต่อ URL: ใช้ param ?cat= (category_id) และ ?q= (search)
+$cat = isset($_GET['cat']) ? intval($_GET['cat']) : 0;
 $search = $_GET['q'] ?? '';
 
-// ✅ ดึงรายการหมวดหมู่ทั้งหมด
-$categories = $conn->query("SELECT DISTINCT category FROM products WHERE category IS NOT NULL ORDER BY category ASC")->fetchAll(PDO::FETCH_COLUMN);
+// ✅ โหลดหมวดหมู่จากตาราง categories (ฐานข้อมูลเก็บชื่อเป็น name_th)
+$categories = $conn->query("SELECT category_id, name_th AS name FROM categories ORDER BY sort_order ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// ✅ ดึงสินค้าตามหมวดหรือคำค้น
+// ✅ สร้างคิวรีสินค้า (ใช้ category_id)
 $query = "SELECT p.*, MIN(pp.price_thb) AS min_price
           FROM products p
           LEFT JOIN product_prices pp ON p.product_id = pp.product_id
           WHERE p.status = 'active'";
 
 $params = [];
-if (!empty($category)) {
-  $query .= " AND p.category = ?";
-  $params[] = $category;
+if ($cat > 0) {
+  $query .= " AND p.category_id = ?";
+  $params[] = $cat;
 }
 if (!empty($search)) {
   $query .= " AND p.name LIKE ?";
@@ -39,11 +39,11 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <aside class="filter-sidebar">
     <h4>หมวดหมู่</h4>
     <ul class="category-list">
-      <li><a href="products.php" class="<?= empty($category) ? 'active' : '' ?>">ทั้งหมด</a></li>
-      <?php foreach ($categories as $cat): ?>
+      <li><a href="products.php" class="<?= ($cat === 0) ? 'active' : '' ?>">ทั้งหมด</a></li>
+      <?php foreach ($categories as $c): ?>
         <li>
-          <a href="products.php?category=<?= urlencode($cat) ?>" class="<?= ($category === $cat) ? 'active' : '' ?>">
-            <?= htmlspecialchars($cat) ?>
+          <a href="products.php?cat=<?= (int)$c['category_id'] ?>" class="<?= ($cat === (int)$c['category_id']) ? 'active' : '' ?>">
+            <?= htmlspecialchars($c['name']) ?>
           </a>
         </li>
       <?php endforeach; ?>

@@ -20,7 +20,7 @@ try {
 }
 
 // ✅ ดึงหมวดหมู่และสินค้าในแต่ละหมวด
-$cats = $conn->query("SELECT * FROM categories ORDER BY sort_order ASC LIMIT 4")->fetchAll(PDO::FETCH_ASSOC);
+$cats = $conn->query("SELECT * FROM categories ORDER BY sort_order ASC LIMIT 2")->fetchAll(PDO::FETCH_ASSOC);
 $catItems = [];
 foreach ($cats as $c) {
   $stmt = $conn->prepare("SELECT p.product_id, p.name, p.image_url, p.region

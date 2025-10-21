@@ -3,6 +3,7 @@ session_start();
 require_once 'includes/auth_user.php';
 include 'includes/db_connect.php';
 include 'includes/header.php';
+include 'includes/csrf.php';
 
 // ✅ ถ้าไม่มีสินค้าในตะกร้า
 if (empty($_SESSION['cart'])) {
@@ -20,6 +21,10 @@ foreach ($cart_items as $item) {
 
 // ✅ เมื่อกด “ดำเนินการชำระเงิน”
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
+  if (!csrf_verify($_POST['csrf'] ?? '')) {
+    echo "<div class='alert alert-danger text-center'>❌ CSRF token ไม่ถูกต้อง</div>";
+    exit;
+  }
   $method = $_POST['payment_method'];
   if (!$user_id) $user_id = 1; // จำลอง guest ถ้ายังไม่ได้ login
 
@@ -80,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
     <h4>เลือกวิธีการชำระเงิน</h4>
 
     <form method="POST" id="checkoutForm">
+      <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
       <div class="method-group">
         <div class="method-item">
           <input type="radio" name="payment_method" id="payPromptPay" value="PromptPay" checked>

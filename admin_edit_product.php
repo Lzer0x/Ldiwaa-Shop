@@ -3,6 +3,7 @@ session_start();
 require_once 'includes/auth_user.php';
 include 'includes/db_connect.php';
 include 'includes/header.php';
+include 'includes/csrf.php';
 
 // ✅ ตรวจสิทธิ์
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -28,6 +29,14 @@ if (!$product) {
   exit;
 }
 
+// Backwards compatibility: if product has legacy 'category' text column, try to find matching category_id
+if (empty($product['category_id']) && !empty($product['category'])) {
+  $map = $conn->prepare("SELECT category_id FROM categories WHERE name_th = ? LIMIT 1");
+  $map->execute([$product['category']]);
+  $found = $map->fetchColumn();
+  if ($found) $product['category_id'] = (int)$found;
+}
+
 // ✅ ดึงแพ็กเกจ
 $pkgStmt = $conn->prepare("SELECT * FROM product_prices WHERE product_id = ? ORDER BY id ASC");
 $pkgStmt->execute([$product_id]);
@@ -35,8 +44,14 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ✅ บันทึกการแก้ไขสินค้า
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
+  if (!csrf_verify($_POST['csrf'] ?? '')) {
+    echo "<div class='alert alert-danger text-center'>❌ CSRF token ไม่ถูกต้อง</div>";
+    include 'includes/footer.php';
+    exit;
+  }
+
   $name = trim($_POST['name']);
-  $category = trim($_POST['category']);
+  $category_id = intval($_POST['category_id']);
   $region = trim($_POST['region']);
   $desc = trim($_POST['description']);
   $status = $_POST['status'];
@@ -50,8 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
     if (move_uploaded_file($_FILES['image']['tmp_name'], $path)) $image = $path;
   }
 
-  $update = $conn->prepare("UPDATE products SET name=?, category=?, region=?, description=?, image_url=?, status=? WHERE product_id=?");
-  $update->execute([$name, $category, $region, $desc, $image, $status, $product_id]);
+  $update = $conn->prepare("UPDATE products SET name=?, category_id=?, region=?, description=?, image_url=?, status=? WHERE product_id=?");
+  $update->execute([$name, $category_id, $region, $desc, $image, $status, $product_id]);
 
   $_SESSION['flash_message'] = "✅ บันทึกข้อมูลสินค้าเรียบร้อยแล้ว";
   header("Location: admin_edit_product.php?id=$product_id");
@@ -74,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
       <?php endif; ?>
 
       <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">ชื่อสินค้า</label>
@@ -81,7 +97,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
           </div>
           <div class="col-md-6">
             <label class="form-label">หมวดหมู่</label>
-            <input type="text" name="category" class="form-control" value="<?= htmlspecialchars($product['category']) ?>" required>
+            <select name="category_id" class="form-select" required>
+              <?php
+                $cats = $conn->query("SELECT category_id, name_th AS name FROM categories ORDER BY sort_order ASC")->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($cats as $ct) {
+                  $sel = ($product['category_id'] == $ct['category_id']) ? 'selected' : '';
+                  echo '<option value="'.(int)$ct['category_id'].'" '.$sel.'>'.htmlspecialchars($ct['name']).'</option>';
+                }
+              ?>
+            </select>
           </div>
           <div class="col-md-6">
             <label class="form-label">ภูมิภาค</label>

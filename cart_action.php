@@ -2,7 +2,15 @@
 session_start();
 require_once 'includes/auth_user.php';
 include 'includes/db_connect.php';
+include 'includes/csrf.php';
 
+// Verify CSRF for POST actions
+if ($_SERVER["REQUEST_METHOD"] === 'POST') {
+    if (!csrf_verify($_POST['csrf'] ?? '')) {
+        echo "<div class='alert alert-danger text-center'>❌ CSRF token ไม่ถูกต้อง</div>";
+        exit;
+    }
+}
 // ตรวจสอบว่ามีข้อมูลส่งมาจริงไหม
 if ($_SERVER["REQUEST_METHOD"] !== "POST" || !isset($_POST['product_id'], $_POST['package_id'], $_POST['action'])) {
     header("Location: products.php");
