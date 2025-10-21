@@ -44,6 +44,18 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $payStmt = $conn->prepare("SELECT slip_path, status FROM payments WHERE order_id = ? ORDER BY payment_id DESC LIMIT 1");
 $payStmt->execute([$order_id]);
 $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
+
+// ✅ ดึงโค้ด Redeem (ถ้ามี)
+$redeemStmt = $conn->prepare("
+  SELECT r.codes, p.name, pp.title 
+  FROM order_redeems r
+  JOIN products p ON r.product_id = p.product_id
+  JOIN order_details d ON d.order_id = r.order_id AND d.product_id = r.product_id
+  JOIN product_prices pp ON d.package_id = pp.id
+  WHERE r.order_id = ?
+");
+$redeemStmt->execute([$order_id]);
+$redeems = $redeemStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <link rel="stylesheet" href="assets/css/order_detail.css">
@@ -150,6 +162,21 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
             </ul>
           </div>
         <?php endif; ?>
+      <?php endif; ?>
+
+      <!-- ✅ โค้ด Redeem -->
+      <?php if (!empty($redeems)): ?>
+        <div class="redeem-section" style="margin-top:20px;">
+          <h4>🎁 โค้ดรีดีมของคุณ</h4>
+          <ul style="list-style:none;padding:0;display:grid;gap:8px;">
+            <?php foreach ($redeems as $r): ?>
+              <li style="background:#19202e;border:1px solid #2b3245;border-radius:10px;padding:8px 10px;">
+                <strong><?= htmlspecialchars($r['name']) ?></strong> (<?= htmlspecialchars($r['title']) ?>)<br>
+                <code><?= htmlspecialchars($r['codes']) ?></code>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
       <?php endif; ?>
 
       <div class="order-total">

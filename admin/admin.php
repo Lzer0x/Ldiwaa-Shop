@@ -16,15 +16,12 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 <link rel="stylesheet" href="../assets/css/admin.css">
 
 <div class="admin-wrapper">
-
-  <?php include __DIR__ . '/includes/sidebar.php'; // 1. โหลด Sidebar ?>
+  <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
   <main class="main-content">
     <?php
-    // 2. ส่วนควบคุมการสลับหน้า (Routing)
-    $page = $_GET['page'] ?? 'dashboard'; // หน้าเริ่มต้นคือ dashboard
+    $page = $_GET['page'] ?? 'dashboard';
 
-    // รายการหน้าที่อนุญาต (ป้องกัน Path Traversal)
     $allowedPages = [
         'dashboard'    => __DIR__ . '/pages/dashboard.php',
         'orders'       => __DIR__ . '/pages/orders.php',
@@ -33,15 +30,16 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
         'edit_product' => __DIR__ . '/pages/edit_product.php',
         'users'        => __DIR__ . '/pages/users.php',
         'edit_user'    => __DIR__ . '/pages/edit_user.php',
+        'redeem_keys'  => __DIR__ . '/pages/redeem_keys.php', // ✅ เพิ่มบรรทัดนี้
     ];
 
-    // 3. โหลด "ไส้ใน"
     if (array_key_exists($page, $allowedPages)) {
-        // $conn ถูกส่งต่อไปยังไฟล์ที่ include
-        include $allowedPages[$page]; 
+        include $allowedPages[$page];
     } else {
-        // ถ้าหน้าไม่มีในรายการ
-        echo "<h1>404 - ไม่พบหน้า</h1>";
+        echo "<h1 class='text-center mt-5'>404 - ไม่พบหน้า</h1>";
     }
     ?>
-  </main></div><?php include __DIR__ . '/../includes/footer.php'; // โหลด JavaScript และปิด </body> ?>
+  </main>
+</div>
+
+<?php include __DIR__ . '/../includes/footer.php'; ?>
