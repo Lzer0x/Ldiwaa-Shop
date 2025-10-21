@@ -1,12 +1,12 @@
 <?php
 session_start();
-require_once 'includes/auth_admin.php';
-include 'includes/db_connect.php';
-include 'includes/csrf.php';
+require_once '../includes/auth_admin.php';
+include '../includes/db_connect.php';
+include '../includes/csrf.php';
 
 function flash($type, $msg) {
   $_SESSION['flash'] = ['type' => $type, 'msg' => $msg];
-  header("Location: admin_orders.php");
+  header("Location: orders.php");
   exit;
 }
 
@@ -113,3 +113,4 @@ try {
   if ($conn->inTransaction()) $conn->rollBack();
   flash('danger', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
 }
+

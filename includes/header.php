@@ -87,21 +87,9 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
       </a>
 
       <?php if($_SESSION['user']['role'] === 'admin'): ?>
-        <a href="admin_dashboard.php" class="btn-pill btn-admin nav-btn">
+        <a href="admin/dashboard.php" class="btn-pill btn-admin nav-btn">
           <i class="bi bi-bag-check"></i>
           <span>dashboard</span>
-        </a>
-        <a href="admin_orders.php" class="btn-pill btn-admin nav-btn">
-          <i class="bi bi-box-seam"></i>
-          <span>คำสั่งซื้อ</span>
-        </a>
-        <a href="admin_products.php" class="btn-pill btn-admin nav-btn">
-          <i class="bi bi-bag-check"></i>
-          <span>สินค้า</span>
-        </a>
-        <a href="admin_users.php" class="btn-pill btn-admin nav-btn">
-          <i class="bi bi-people-fill"></i>
-          <span>ผู้ใช้</span>
         </a>
       <?php endif; ?>
 

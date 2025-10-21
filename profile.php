@@ -78,8 +78,8 @@ $isAdmin = ($userData['role'] ?? 'user') === 'admin';
       <a href="support.php"><span class="ico">💬</span> ติดต่อ/ช่วยเหลือ</a>
       <?php if ($isAdmin): ?>
       <div class="title" style="margin-top:14px;">ผู้ดูแลระบบ</div>
-      <a href="admin_orders.php"><span class="ico">📦</span> จัดการคำสั่งซื้อ</a>
-      <a href="admin_products.php"><span class="ico">📁</span> จัดการสินค้า</a>
+      <a href="admin/dashboard.php"><span class="ico">📦</span> จัดการคำสั่งซื้อ</a>
+      <a href="admin/dashboard.php"><span class="ico">📁</span> จัดการสินค้า</a>
       <?php endif; ?>
       <a href="logout.php"><span class="ico">🚪</span> ออกจากระบบ</a>
     </nav>
@@ -208,3 +208,4 @@ $isAdmin = ($userData['role'] ?? 'user') === 'admin';
 </div>
 
 <?php include 'includes/footer.php'; ?>
+
