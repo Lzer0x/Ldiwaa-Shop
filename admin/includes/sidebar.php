@@ -24,9 +24,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
     <a class="list-group-item list-group-item-action <?= ($currentPage == 'users') ? 'active' : '' ?>" 
        href="admin.php?page=users">จัดการผู้ใช้</a>
  
-   
-
-    <hr style="border-color: #555;">
-    <a class="list-group-item list-group-item-action" href="../index.php">กลับหน้าหลัก</a>
+   <hr style="border-color: #555;">
+   <a class="list-group-item list-group-item-action" href="../index.php">กลับหน้าหลัก</a>
   </div>
 </nav>
