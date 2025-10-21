@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../includes/auth_admin.php';
-include __DIR__ . '/../includes/header.php';
-
+require_once 'includes/auth_user.php';
+include 'includes/db_connect.php';
+include 'includes/header.php';
 // Summary stats
 try {
   $totalSalesStmt = $conn->prepare("SELECT COALESCE(SUM(total_price),0) AS total_sales FROM orders WHERE payment_status = 'paid'");
@@ -73,7 +73,7 @@ try {
                 <td><?= htmlspecialchars($o['payment_status']) ?></td>
                 <td><?= htmlspecialchars($o['order_status']) ?></td>
                 <td><?= htmlspecialchars($o['created_at']) ?></td>
-                <td><a href="../order_detail.php?order_id=<?= $o['order_id'] ?>" class="btn btn-sm btn-outline-primary">🔍</a></td>
+                <td><a href="/gamekeyplus/order_detail.php?order_id=<?= $o['order_id'] ?>" class="btn btn-sm btn-outline-primary">🔍</a></td>
               </tr>
             <?php endforeach; ?>
           </tbody>
@@ -83,4 +83,4 @@ try {
   </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
