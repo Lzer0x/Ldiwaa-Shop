@@ -53,6 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
     $conn->commit();
 
     // ✅ 4. ล้างตะกร้าและเก็บ order_id ล่าสุด
+    // ถ้าเป็นผู้ใช้ที่ล็อกอิน ให้ลบข้อมูลตะกร้าที่เก็บในฐานข้อมูลด้วย
+    if (!empty($_SESSION['user']['user_id'])) {
+      $conn->prepare("DELETE FROM carts WHERE user_id = ?")->execute([$_SESSION['user']['user_id']]);
+    }
+
     unset($_SESSION['cart']);
     $_SESSION['latest_order_id'] = $order_id;
 
