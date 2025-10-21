@@ -30,8 +30,8 @@ label {
   font-weight: 600;
   margin-bottom: 6px;
   color: #ccc;
-}
-
+    outline: none;
+  }
 .form-control {
   width: 100%;
   padding: 10px 12px;
@@ -43,9 +43,11 @@ label {
   transition: 0.25s;
 }
 
+  outline: none;
+}
 .form-control:focus {
-  border-color: #00ffa9;
-  box-shadow: 0 0 10px rgba(0,255,170,0.3);
+  border-color: #00d1ff;
+  box-shadow: 0 8px 28px rgba(0, 209, 255, 0.18), 0 0 0 3px rgba(0, 209, 255, 0.06);
 }
 
 .btn-save {
