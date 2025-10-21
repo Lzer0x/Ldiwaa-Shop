@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
           }
 
-          header("Location: " . ($user['role'] === 'admin' ? "admin/dashboard\.php" : "index.php"));
+          header("Location: " . ($user['role'] === 'admin' ? "admin/dashboard.php" : "index.php"));
           exit;
         }
       } else {
