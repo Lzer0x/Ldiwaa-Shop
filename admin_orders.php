@@ -66,6 +66,18 @@ $stmt = $conn->query("
   ORDER BY o.created_at DESC
 ");
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Auto-reconcile any paid+processing orders now that stock may have changed
+foreach ($orders as &$oRow) {
+  if (($oRow['payment_status'] ?? '') === 'paid' && ($oRow['order_status'] ?? '') === 'processing') {
+    $res = assignRedeemKeys($conn, (int)$oRow['order_id']);
+    if (!empty($res['success']) && empty($res['shortages'])) {
+      $conn->prepare("UPDATE orders SET order_status='completed' WHERE order_id=?")->execute([$oRow['order_id']]);
+      $oRow['order_status'] = 'completed';
+    }
+  }
+}
+unset($oRow);
 ?>
 
 <link rel="stylesheet" href="assets/css/admin_orders.css">

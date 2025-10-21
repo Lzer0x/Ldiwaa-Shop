@@ -9,11 +9,19 @@ function assignRedeemKeys(PDO $conn, int $orderId): array {
         'shortages' => [],
     ];
 
-    // Prevent duplicate assignment
-    $chk = $conn->prepare("SELECT COUNT(*) FROM order_redeems WHERE order_id = ?");
-    $chk->execute([$orderId]);
-    if ((int)$chk->fetchColumn() > 0) {
-        return $result;
+    // Load already assigned counts per product so we can top-up remaining keys
+    $assignedCount = [];
+    $ar = $conn->prepare("SELECT product_id, codes FROM order_redeems WHERE order_id = ?");
+    $ar->execute([$orderId]);
+    while ($r = $ar->fetch(PDO::FETCH_ASSOC)) {
+        $pid = (int)$r['product_id'];
+        $cnt = 0;
+        if (!empty($r['codes'])) {
+            $parts = array_filter(array_map('trim', explode(',', $r['codes'])));
+            $cnt = count($parts);
+        }
+        if (!isset($assignedCount[$pid])) { $assignedCount[$pid] = 0; }
+        $assignedCount[$pid] += $cnt;
     }
 
     // Get order owner
@@ -46,7 +54,8 @@ function assignRedeemKeys(PDO $conn, int $orderId): array {
 
         foreach ($items as $row) {
             $pid = (int)$row['product_id'];
-            $need = max(0, (int)$row['quantity']);
+            $already = (int)($assignedCount[$pid] ?? 0);
+            $need = max(0, (int)$row['quantity'] - $already);
             if ($need === 0) { continue; }
 
             // Build SELECT with literal LIMIT for compatibility
