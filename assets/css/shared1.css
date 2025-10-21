@@ -319,6 +319,16 @@ img { max-width: 100%; display: block; }
 .cat-item .name { font-size: .95rem; color: var(--text); }
 .cat-item .sub { font-size: .8rem; color: var(--muted); }
 
+/* Region label used across site (products, index) */
+.region {
+  font-size: .8rem;
+  color: var(--muted);
+  background: rgba(255,255,255,0.03);
+  padding: 3px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
 /* ===== NEWS ===== */
 .news-grid {
   display: grid;

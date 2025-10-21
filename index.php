@@ -81,7 +81,7 @@ $news = $conn->query("SELECT title, image_url, content FROM promotions ORDER BY 
           <img class="logo" src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($s['name']) ?>">
           <div>
             <div class="title"><?= htmlspecialchars($s['name']) ?></div>
-            <div class="sub text-muted" style="font-size:.8rem;opacity:.8">
+            <div class="region sub" style="font-size:.8rem;opacity:.8">
               <?= htmlspecialchars($s['region'] ?: 'Global') ?>
             </div>
           </div>
@@ -113,7 +113,7 @@ $news = $conn->query("SELECT title, image_url, content FROM promotions ORDER BY 
                 <img class="icon" src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($it['name']) ?>">
                 <div>
                   <div class="name"><?= htmlspecialchars($it['name']) ?></div>
-                  <div class="sub"><?= htmlspecialchars($it['region'] ?: 'Global') ?></div>
+                  <div class="region sub"><?= htmlspecialchars($it['region'] ?: 'Global') ?></div>
                 </div>
               </div>
             </a>
