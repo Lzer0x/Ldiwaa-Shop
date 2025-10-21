@@ -3,29 +3,41 @@ session_start();
 include 'includes/db_connect.php';
 include 'includes/header.php';
 
-// ✅ รับค่าจาก URL (q มาจากช่องค้นหาใน header)
-$category = $_GET['category'] ?? '';
-$search = $_GET['q'] ?? '';
+// รับค่าจาก URL: รองรับ ?cat= (category_id) และ ?q= (search)
+$catId = null;
+$search = trim($_GET['q'] ?? '');
+if (isset($_GET['cat']) && $_GET['cat'] !== '') {
+  $catId = is_numeric($_GET['cat']) ? (int)$_GET['cat'] : null;
+} elseif (!empty($_GET['category'])) {
+  // backward-compat: try to resolve category by slug or name
+  $raw = $_GET['category'];
+  if (is_numeric($raw)) {
+    $catId = (int)$raw;
+  } else {
+    $stmt = $conn->prepare("SELECT category_id FROM categories WHERE slug = ? OR name_th = ? LIMIT 1");
+    $stmt->execute([$raw, $raw]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) $catId = (int)$row['category_id'];
+  }
+}
 
-// ✅ ดึงรายการหมวดหมู่ทั้งหมด
-$categories = $conn->query("SELECT DISTINCT category FROM products WHERE category IS NOT NULL ORDER BY category ASC")->fetchAll(PDO::FETCH_COLUMN);
+// ดึงรายการหมวดหมู่ทั้งหมดจากตาราง categories
+$categories = $conn->query("SELECT category_id, name_th FROM categories ORDER BY sort_order ASC, name_th ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// ✅ ดึงสินค้าตามหมวดหรือคำค้น
+// ดึงสินค้าตามหมวดหรือคำค้น (prepared)
 $query = "SELECT p.*, MIN(pp.price_thb) AS min_price
           FROM products p
           LEFT JOIN product_prices pp ON p.product_id = pp.product_id
           WHERE p.status = 'active'";
-
 $params = [];
-if (!empty($category)) {
-  $query .= " AND p.category = ?";
-  $params[] = $category;
+if ($catId !== null) {
+  $query .= " AND p.category_id = ?";
+  $params[] = $catId;
 }
-if (!empty($search)) {
+if ($search !== '') {
   $query .= " AND p.name LIKE ?";
   $params[] = "%$search%";
 }
-
 $query .= " GROUP BY p.product_id ORDER BY p.created_at DESC";
 $stmt = $conn->prepare($query);
 $stmt->execute($params);
