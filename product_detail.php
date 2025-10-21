@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 session_start();
 require_once 'includes/auth_user.php';
 include 'includes/db_connect.php';
 include 'includes/header.php';
+header("Content-Type: text/html; charset=utf-8");
 
 if (!isset($_GET['id'])) {
     echo "<div class='alert alert-danger text-center'>❌ ไม่พบสินค้าที่เลือก</div>";
@@ -29,7 +30,6 @@ $pkgStmt->execute([$product_id]);
 $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!-- ✅ เชื่อมต่อไฟล์ CSS -->
 <link rel="stylesheet" href="assets/css/product_detail.css">
 
 <div class="product-header">
@@ -37,7 +37,9 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
   <div>
     <h2><?= htmlspecialchars($product['name']) ?></h2>
     <div class="region-tag">🌐 <?= htmlspecialchars($product['region'] ?: 'Global') ?></div>
-    <p class="mt-2" style="max-width:600px;"><?= htmlspecialchars($product['description'] ?: 'ไม่มีรายละเอียดสินค้าเพิ่มเติม') ?></p>
+    <p class="mt-2" style="max-width:600px;">
+      <?= htmlspecialchars($product['description'] ?: 'ไม่มีรายละเอียดสินค้าพิเศษเพิ่มเติม') ?>
+    </p>
   </div>
 </div>
 
@@ -46,9 +48,10 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
   <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
   <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
   <input type="hidden" name="package_id" id="selected_package">
+  <input type="hidden" name="order_uid" id="order_uid_hidden">
 
   <div class="section-content">
-    <!-- 🟢 ซ้าย: รายการแพ็กเกจ -->
+    <!-- 🔹 ซ้าย: รายการแพ็กเกจ -->
     <div>
       <?php if ($packages): ?>
         <?php foreach ($packages as $pkg): 
@@ -72,12 +75,17 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
       <?php endif; ?>
     </div>
 
-    <!-- 🟢 ขวา: กล่องคำสั่งซื้อ -->
+    <!-- 🔹 ขวา: กล่องคำสั่งซื้อ -->
     <div class="order-box">
-      <h5>ข้อมูลการสั่งซื้อ</h5>
+      <h5>สรุปคำสั่งซื้อ</h5>
       <input type="text" class="order-input" placeholder="กรอก Player ID (ถ้ามี)">
+      <div class="qty-control" aria-label="Quantity selector">
+        <button type="button" id="qtyMinus" aria-label="ลดจำนวน">-</button>
+        <input type="number" name="quantity" id="quantity" value="1" min="1">
+        <button type="button" id="qtyPlus" aria-label="เพิ่มจำนวน">+</button>
+      </div>
       <hr>
-      <p class="mb-1">รวมทั้งหมด</p>
+      <p class="mb-1">ยอดรวมทั้งหมด</p>
       <div class="total-price" id="totalDisplay">฿0.00</div>
 
       <button type="submit" name="action" value="buy" class="btn-buy">ซื้อทันที</button>
@@ -90,23 +98,54 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
 const packages = document.querySelectorAll('.package-card');
 const totalDisplay = document.getElementById('totalDisplay');
 const selectedInput = document.getElementById('selected_package');
+const qtyInput = document.getElementById('quantity');
+const btnMinus = document.getElementById('qtyMinus');
+const btnPlus = document.getElementById('qtyPlus');
+const uidInput = document.querySelector('.order-input');
+const uidHidden = document.getElementById('order_uid_hidden');
+const isTopup = <?= (int)($product['category_id'] ?? 0) === 2 ? 'true' : 'false' ?>;
+let unitPrice = 0;
 
+// เลือกแพ็กเกจ
 packages.forEach(pkg => {
   pkg.addEventListener('click', () => {
     packages.forEach(p => p.classList.remove('selected'));
     pkg.classList.add('selected');
-    const price = pkg.dataset.price;
     selectedInput.value = pkg.dataset.id;
-    totalDisplay.textContent = '฿' + parseFloat(price).toFixed(2);
+    unitPrice = parseFloat(pkg.dataset.price || '0');
+    updateTotal();
   });
 });
 
+// อัปเดตราคา
+function updateTotal() {
+  const q = Math.max(1, parseInt(qtyInput?.value || '1'));
+  const total = unitPrice * q;
+  totalDisplay.textContent = '฿' + total.toFixed(2);
+}
+btnMinus?.addEventListener('click', () => {
+  const v = Math.max(1, parseInt(qtyInput.value || '1') - 1);
+  qtyInput.value = v;
+  updateTotal();
+});
+btnPlus?.addEventListener('click', () => {
+  const v = Math.max(1, parseInt(qtyInput.value || '1') + 1);
+  qtyInput.value = v;
+  updateTotal();
+});
+qtyInput?.addEventListener('input', updateTotal);
+
+// ตรวจสอบก่อนส่งฟอร์ม
 document.getElementById('packageForm').addEventListener('submit', e => {
   if (!selectedInput.value) {
     e.preventDefault();
     alert('กรุณาเลือกแพ็กเกจก่อนทำรายการ');
   }
+  if (uidHidden && uidInput) { uidHidden.value = uidInput.value.trim(); }
 });
+
+// ซ่อนช่อง UID ถ้าไม่ใช่สินค้าประเภท Top-up
+if (!isTopup && uidInput) uidInput.style.display = 'none';
 </script>
 
 <?php include 'includes/footer.php'; ?>

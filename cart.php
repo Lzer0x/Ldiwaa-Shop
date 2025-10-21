@@ -43,6 +43,9 @@ include 'includes/header.php';
             <div class="cart-info">
               <div class="cart-name"><?= htmlspecialchars($item['name']) ?></div>
               <div class="cart-detail"><?= htmlspecialchars($item['title']) ?></div>
+              <?php if (!empty($item['uid'])): ?>
+                <div class="cart-uid" style="color:#00d1ff;">UID: <?= htmlspecialchars($item['uid']) ?></div>
+              <?php endif; ?>
             </div>
           </div>
 

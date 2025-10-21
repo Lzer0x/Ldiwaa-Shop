@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // $conn ถูกส่งมาจาก admin.php
 require_once __DIR__ . '/../../includes/redeem_service.php'; // <-- อัปเดต path
 
@@ -54,6 +54,22 @@ foreach ($orders as &$oRow) {
 }
 unset($oRow);
 ?>
+<?php
+// ตรวจสอบว่ามีคอลัมน์ uid ใน order_details หรือไม่
+$hasUidCol = false;
+try {
+  $c2 = $conn->query("SHOW COLUMNS FROM order_details LIKE 'uid'");
+  $hasUidCol = (bool)$c2->fetchColumn();
+} catch (Exception $e) { $hasUidCol = false; }
+if ($hasUidCol) {
+  foreach ($orders as &$row2) {
+    $chk = $conn->prepare("SELECT COUNT(*) FROM order_details WHERE order_id=? AND uid IS NOT NULL AND uid!=''");
+    $chk->execute([$row2['order_id']]);
+    $row2['has_uid'] = ($chk->fetchColumn() > 0);
+  }
+  unset($row2);
+}
+?>
 
 <!-- Using unified admin.css from admin.php -->
 
@@ -62,7 +78,8 @@ unset($oRow);
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">จัดการคำสั่งซื้อ</h4>
       <div>
-        <a href="admin.php?page=dashboard" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a> <a href="../index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
+        <a href="admin.php?page=dashboard" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a>
+        <a href="../index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
       </div>
     </div>
 
@@ -71,7 +88,7 @@ unset($oRow);
         <?php if ($_GET['msg'] === 'paid_assigned'): ?>
           <div class="alert alert-success text-center">ทำเครื่องหมายชำระเงินแล้ว และแจกคีย์เรียบร้อย</div>
         <?php elseif ($_GET['msg'] === 'paid_pending'): ?>
-          <div class="alert alert-warning text-center">ทำเครื่องหมายชำระเงินแล้ว แต่คีย์ไม่เพียงพอ ระบบตั้งสถานะ Processing</div>
+          <div class="alert alert-warning text-center">ทำเครื่องหมายชำระเงินแล้ว แต่คีย์ยังไม่เพียงพอ ระบบตั้งสถานะ Processing</div>
         <?php elseif ($_GET['msg'] === 'pending'): ?>
           <div class="alert alert-warning text-center">อัปเดตเป็น Pending แล้ว</div>
         <?php elseif ($_GET['msg'] === 'cancelled'): ?>
@@ -104,7 +121,7 @@ unset($oRow);
                   <?php if ($order['payment_status'] === 'paid'): ?>
                     <span class="badge bg-success px-3 py-2">ชำระแล้ว</span>
                   <?php elseif ($order['payment_status'] === 'pending'): ?>
-                    <span class="badge bg-warning text-dark px-3 py-2">รอตรวจ</span>
+                    <span class="badge bg-warning text-dark px-3 py-2">รอตรวจสอบ</span>
                   <?php elseif ($order['payment_status'] === 'unpaid'): ?>
                     <span class="badge bg-secondary px-3 py-2">ยังไม่ชำระ</span>
                   <?php else: ?>
@@ -125,6 +142,9 @@ unset($oRow);
                 <td><?= htmlspecialchars($order['created_at']) ?></td>
                 <td>
                   <div class="d-flex flex-wrap justify-content-center gap-1">
+                    <?php if (!empty($order['has_uid'])): ?>
+                      <span class="badge bg-info">UID</span>
+                    <?php endif; ?>
                     <a href="../order_success.php?id=<?= $order['order_id'] ?>" class="btn btn-sm btn-outline-primary">รายละเอียด</a>
                     <?php if ($order['slip_image']): ?>
                       <a href="<?= htmlspecialchars($order['slip_image']) ?>" target="_blank" class="btn btn-sm btn-outline-info">สลิป</a>

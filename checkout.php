@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 session_start();
+header("Content-Type: text/html; charset=utf-8");
+
 require_once 'includes/auth_user.php';
 include 'includes/db_connect.php';
 include 'includes/header.php';
@@ -25,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
     echo "<div class='alert alert-danger text-center'>❌ CSRF token ไม่ถูกต้อง</div>";
     exit;
   }
+
   $method = $_POST['payment_method'];
   if (!$user_id) $user_id = 1; // จำลอง guest ถ้ายังไม่ได้ login
 
@@ -38,16 +41,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
     $order_id = $conn->lastInsertId();
 
     // ✅ 2. บันทึกรายการสินค้าใน order_details
-    $detailStmt = $conn->prepare("INSERT INTO order_details (order_id, product_id, package_id, quantity, price)
-                                  VALUES (?, ?, ?, ?, ?)");
-    foreach ($cart_items as $item) {
-      $detailStmt->execute([
-        $order_id,
-        $item['product_id'],
-        $item['package_id'],
-        $item['quantity'],
-        $item['price']
-      ]);
+    // ตรวจสอบว่ามีคอลัมน์ uid หรือไม่
+    $hasUidCol = false;
+    try {
+      $chk = $conn->query("SHOW COLUMNS FROM order_details LIKE 'uid'");
+      $hasUidCol = (bool)$chk->fetchColumn();
+    } catch (Exception $e) { $hasUidCol = false; }
+
+    if ($hasUidCol) {
+      $detailStmt = $conn->prepare("INSERT INTO order_details (order_id, product_id, package_id, quantity, price, uid)
+                                    VALUES (?, ?, ?, ?, ?, ?)");
+      foreach ($cart_items as $item) {
+        $detailStmt->execute([
+          $order_id,
+          $item['product_id'],
+          $item['package_id'],
+          $item['quantity'],
+          $item['price'],
+          $item['uid'] ?? null
+        ]);
+      }
+    } else {
+      $detailStmt = $conn->prepare("INSERT INTO order_details (order_id, product_id, package_id, quantity, price)
+                                    VALUES (?, ?, ?, ?, ?)");
+      foreach ($cart_items as $item) {
+        $detailStmt->execute([
+          $order_id,
+          $item['product_id'],
+          $item['package_id'],
+          $item['quantity'],
+          $item['price']
+        ]);
+      }
     }
 
     // ✅ 3. สร้างรายการ payment เบื้องต้น (รออัปโหลดสลิป)
@@ -58,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
     $conn->commit();
 
     // ✅ 4. ล้างตะกร้าและเก็บ order_id ล่าสุด
-    // ถ้าเป็นผู้ใช้ที่ล็อกอิน ให้ลบข้อมูลตะกร้าที่เก็บในฐานข้อมูลด้วย
     if (!empty($_SESSION['user']['user_id'])) {
       $conn->prepare("DELETE FROM carts WHERE user_id = ?")->execute([$_SESSION['user']['user_id']]);
     }
@@ -136,13 +160,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
         <img src="images/th_thaipromptpayqr_bank.png" alt="PromptPay" id="selectedPayLogo">
       </div>
       <div class="service-fee">
-        <span>Service Fee</span>
+        <span>ค่าธรรมเนียม</span>
         <strong>THB <?= number_format($total_price * 0.015, 2) ?> <small>(1.5%)</small></strong>
       </div>
       <div class="pay-total">
         <span>รวมสุทธิ</span>
         <strong>THB <?= number_format($total_price * 1.015, 2) ?></strong>
       </div>
+    </div>
+
+    <div class="summary-items" style="margin-top:16px;">
+      <h5 style="margin-bottom:8px;">รายการสินค้า</h5>
+      <ul style="list-style:none;padding:0;margin:0;display:grid;gap:8px;">
+        <?php foreach ($cart_items as $it): ?>
+          <li style="background:#1a1f2b;border:1px solid #2e3447;border-radius:10px;padding:10px 12px;">
+            <div><strong><?= htmlspecialchars($it['name']) ?></strong> (<?= htmlspecialchars($it['title']) ?>)</div>
+            <div>จำนวน: <?= (int)$it['quantity'] ?> | ราคา/หน่วย: <?= number_format($it['price'], 2) ?> ฿</div>
+            <?php if (!empty($it['uid'])): ?>
+              <div style="color:#00d1ff;">UID: <?= htmlspecialchars($it['uid']) ?></div>
+            <?php endif; ?>
+          </li>
+        <?php endforeach; ?>
+      </ul>
     </div>
 
     <p class="agree-text">

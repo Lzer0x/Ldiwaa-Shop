@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 session_start();
+header("Content-Type: text/html; charset=utf-8");
+
 include 'includes/db_connect.php';
 include 'includes/header.php';
 require_once 'includes/redeem_service.php';
@@ -29,17 +31,15 @@ if (!$order) {
     exit;
 }
 
-// ✅ ตรวจสอบสิทธิ์เข้าถึง
+// ✅ ตรวจสิทธิ์เข้าถึง
 $current_user_id = $_SESSION['user']['user_id'] ?? null;
-$current_role = $_SESSION['user']['role'] ?? 'user'; // เพิ่มตรงนี้
+$current_role = $_SESSION['user']['role'] ?? 'user';
 
-// ✅ ตรวจสิทธิ์เข้าถึงคำสั่งซื้อ
 if ($current_role !== 'admin' && $order['user_id'] && $order['user_id'] != $current_user_id) {
     echo "<div class='alert alert-danger text-center mt-5'>🚫 คุณไม่มีสิทธิ์เข้าถึงคำสั่งซื้อนี้</div>";
     include 'includes/footer.php';
     exit;
 }
-
 
 // ✅ ดึงรายละเอียดสินค้า
 $detailStmt = $conn->prepare("
@@ -57,18 +57,16 @@ $slip = $conn->prepare("SELECT slip_path FROM payments WHERE order_id = ?");
 $slip->execute([$order_id]);
 $slipPath = $slip->fetchColumn();
 
-// ✅ ตรวจโค้ดรีดีม (เหมือนเดิม)
+// ✅ ตรวจโค้ด Redeem (เหมือนเดิม)
 $redeemCodes = [];
 if ($order['payment_status'] === 'paid') {
-    // Try to assign any remaining keys (idempotent)
     $res = assignRedeemKeys($conn, $order_id);
-    // If after assignment there are no shortages, mark completed
     if (!empty($res['success']) && empty($res['shortages']) && ($order['order_status'] ?? '') === 'processing') {
         $conn->prepare("UPDATE orders SET order_status='completed' WHERE order_id=?")->execute([$order_id]);
         $order['order_status'] = 'completed';
     }
 
-    // Fetch codes for display
+    // ดึงโค้ดที่ Redeem แล้ว
     $fetchRedeem = $conn->prepare("
         SELECT r.product_id, r.codes, p.name, pp.title
         FROM order_redeems r
@@ -118,7 +116,7 @@ if ($order['payment_status'] === 'paid') {
               <th>แพ็กเกจ</th>
               <th>จำนวน</th>
               <th>ราคา</th>
-              <th>รวม</th>
+              <th>รวมย่อย</th>
             </tr>
           </thead>
           <tbody>
@@ -134,19 +132,37 @@ if ($order['payment_status'] === 'paid') {
             <?php endforeach; ?>
           </tbody>
         </table>
+
         <div class="order-total">💰 รวมทั้งหมด: <strong><?= number_format($total, 2) ?> ฿</strong></div>
+
+        <?php if (!empty($details)): ?>
+          <?php $hasUid = false; foreach ($details as $d) { if (!empty($d['uid'])) { $hasUid = true; break; } } ?>
+          <?php if ($hasUid): ?>
+            <div class="uid-summary" style="margin-top:12px;">
+              <h5>UID ที่ระบุ</h5>
+              <ul style="list-style:none;padding:0;margin:0;display:grid;gap:6px;">
+                <?php foreach ($details as $d): if (empty($d['uid'])) continue; ?>
+                  <li style="background:#1a1f2b;border:1px solid #2e3447;border-radius:10px;padding:8px 10px;">
+                    <strong><?= htmlspecialchars($d['name']) ?></strong> (<?= htmlspecialchars($d['title']) ?>)
+                    <div>UID: <?= htmlspecialchars($d['uid']) ?></div>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
+          <?php endif; ?>
+        <?php endif; ?>
       </div>
 
       <?php if ($slipPath): ?>
-      <div class="order-slip">
-        <h4>🧾 หลักฐานการชำระเงิน</h4>
-        <img src="<?= htmlspecialchars($slipPath) ?>" alt="Slip" class="slip-img">
-      </div>
+        <div class="order-slip">
+          <h4>🧾 หลักฐานการชำระเงิน</h4>
+          <img src="<?= htmlspecialchars($slipPath) ?>" alt="Slip" class="slip-img">
+        </div>
       <?php endif; ?>
 
       <div class="order-status-box">
         <?php if ($order['payment_status'] === 'pending'): ?>
-          <div class="alert info">⏳ สลิปของคุณถูกส่งเรียบร้อยแล้ว<br>กรุณารอการตรวจสอบจากแอดมินภายใน 3–5 นาที</div>
+          <div class="alert info">⌛ สลิปของคุณถูกส่งเรียบร้อยแล้ว<br>กรุณารอการตรวจสอบจากแอดมินภายใน 3–5 นาที</div>
         <?php elseif ($order['payment_status'] !== 'paid'): ?>
           <div class="alert warning">
             ⚠️ กรุณาชำระเงินก่อนเพื่อรับโค้ดรีดีม<br>
@@ -167,7 +183,7 @@ if ($order['payment_status'] === 'paid') {
             <?php endforeach; ?>
           </div>
         <?php else: ?>
-          <div class="alert info">⏳ ไม่มีโค้ดรีดีมในระบบตอนนี้<br>อาจรอตรวจสอบจากแอดมิน</div>
+          <div class="alert info">⌛ ยังไม่มีโค้ดรีดีมในระบบตอนนี้<br>อาจรอตรวจสอบจากแอดมิน</div>
         <?php endif; ?>
       </div>
 

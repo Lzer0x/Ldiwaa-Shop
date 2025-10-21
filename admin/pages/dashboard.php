@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // $conn ถูกส่งมาจาก admin.php
 
 // --- Data Fetching ---
@@ -16,16 +16,18 @@ try {
   // 3. Order Status Counts
   $statusStmt = $conn->query("SELECT order_status, COUNT(*) AS cnt FROM orders GROUP BY order_status");
   $statusCounts = $statusStmt->fetchAll(PDO::FETCH_KEY_PAIR);
-    // ตั้งค่า default ให้ครบทุก status
-    $orderStatus = [
-        'processing' => $statusCounts['processing'] ?? 0,
-        'completed' => $statusCounts['completed'] ?? 0,
-        'cancelled' => $statusCounts['cancelled'] ?? 0,
-    ];
-
+  // ตั้งค่า default ให้ครบทุก status
+  $orderStatus = [
+    'processing' => $statusCounts['processing'] ?? 0,
+    'completed' => $statusCounts['completed'] ?? 0,
+    'cancelled' => $statusCounts['cancelled'] ?? 0,
+  ];
 
   // 4. Recent Orders
-  $recentStmt = $conn->query("SELECT o.order_id, o.total_price, o.payment_status, o.order_status, o.created_at, u.username FROM orders o LEFT JOIN users u ON o.user_id = u.user_id ORDER BY o.created_at DESC LIMIT 5");
+  $recentStmt = $conn->query("SELECT o.order_id, o.total_price, o.payment_status, o.order_status, o.created_at, u.username 
+                              FROM orders o 
+                              LEFT JOIN users u ON o.user_id = u.user_id 
+                              ORDER BY o.created_at DESC LIMIT 5");
   $recentOrders = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
 
   // 5. [ฟีเจอร์ใหม่] Monthly Sales for Chart
@@ -47,10 +49,10 @@ try {
       $chartLabels[] = $row['month'];
       $chartData[] = $row['monthly_sales'];
   }
+
   // แปลงเป็น JSON เพื่อให้ JavaScript อ่านได้
   $chartLabelsJSON = json_encode($chartLabels);
   $chartDataJSON = json_encode($chartData);
-
 
 } catch (Exception $e) {
   // Error state
@@ -62,10 +64,9 @@ try {
 
 <!-- Using unified admin.css from admin.php -->
 
-
 <div class="main-header">
-  <h1>แดชบอร์ดแอดมิน</h1>
-  <a href="admin.php?page=orders" class="btn btn-primary">ดูคำสั่งซื้อทั้งหมด</a>
+  <h1>แดชบอร์ด</h1>
+  <a href="admin.php?page=orders" class="btn btn-primary">ไปหน้าคำสั่งซื้อ</a>
 </div>
 
 <div class="row g-4 mb-4">
@@ -96,7 +97,6 @@ try {
 </div>
 
 <div class="row">
-  
   <div class="col-lg-12">
     <div class="content-card">
       <div class="content-card-header">
@@ -157,14 +157,13 @@ try {
       </div>
     </div>
   </div>
-
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const ctx = document.getElementById('salesChart').getContext('2d');
   
-  // รับข้อมูลจาก PHP
   const chartLabels = <?= $chartLabelsJSON ?>;
   const chartData = <?= $chartDataJSON ?>;
 
@@ -189,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function() {
         y: {
           beginAtZero: true,
           ticks: {
-            callback: function(value, index, values) {
+            callback: function(value) {
               return '฿' + new Intl.NumberFormat().format(value);
             }
           }
@@ -200,9 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
           callbacks: {
             label: function(context) {
               let label = context.dataset.label || '';
-              if (label) {
-                label += ': ';
-              }
+              if (label) label += ': ';
               if (context.parsed.y !== null) {
                 label += '฿' + new Intl.NumberFormat().format(context.parsed.y);
               }

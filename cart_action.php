@@ -20,6 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST" || !isset($_POST['product_id'], $_POST
 $product_id = intval($_POST['product_id']);
 $package_id = intval($_POST['package_id']);
 $action = $_POST['action'];
+$quantity = max(1, (int)($_POST['quantity'] ?? 1));
+$order_uid = trim($_POST['order_uid'] ?? '');
 
 // ดึงข้อมูลสินค้าและแพ็กเกจจากฐานข้อมูล
 $stmt = $conn->prepare("SELECT p.product_id, p.name, p.image_url, pp.id AS package_id, pp.title, pp.price_thb 
@@ -64,7 +66,8 @@ if ($action === "add") {
     $key = $product_id . "_" . $package_id; // คีย์เฉพาะของสินค้าแต่ละแพ็กเกจ
 
     if (isset($_SESSION['cart'][$key])) {
-        $_SESSION['cart'][$key]['quantity'] += 1;
+        $_SESSION['cart'][$key]['quantity'] += $quantity;
+        if ($order_uid !== '') { $_SESSION['cart'][$key]['uid'] = $order_uid; }
     } else {
         $_SESSION['cart'][$key] = [
             'product_id' => $item['product_id'],
@@ -73,13 +76,14 @@ if ($action === "add") {
             'title' => $item['title'],
             'price' => $item['price_thb'],
             'image_url' => $item['image_url'],
-            'quantity' => 1
+            'quantity' => $quantity,
+            'uid' => $order_uid
         ];
     }
 
     // ✅ เพิ่มในฐานข้อมูลถ้ามีล็อกอิน
     if ($user_id) {
-        saveCartToDB($conn, $user_id, $product_id, $package_id, 1);
+        saveCartToDB($conn, $user_id, $product_id, $package_id, $quantity);
     }
 
     $_SESSION['flash_message'] = "เพิ่ม “{$item['name']} ({$item['title']})” ลงตะกร้าเรียบร้อยแล้ว!";
@@ -97,14 +101,15 @@ elseif ($action === "buy") {
         'title' => $item['title'],
         'price' => $item['price_thb'],
         'image_url' => $item['image_url'],
-        'quantity' => 1
+        'quantity' => $quantity,
+        'uid' => $order_uid
     ];
 
     // ✅ บันทึกใน DB ด้วย(ในกรณีซื้อทันที)
     if ($user_id) {
         // ล้างของเก่าก่อน
         $conn->prepare("DELETE FROM carts WHERE user_id = ?")->execute([$user_id]);
-        saveCartToDB($conn, $user_id, $product_id, $package_id, 1);
+        saveCartToDB($conn, $user_id, $product_id, $package_id, $quantity);
     }
 
     header("Location: checkout.php");

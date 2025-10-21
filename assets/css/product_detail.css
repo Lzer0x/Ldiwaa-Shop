@@ -172,6 +172,36 @@ body {
   margin-bottom: 16px;
 }
 
+/* ===== QUANTITY CONTROL ===== */
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.qty-control button {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #252c3f;
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.qty-control button:hover { background: #2d3448; color: var(--primary); }
+.qty-control input[type="number"] {
+  width: 70px;
+  text-align: center;
+  padding: 8px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+}
+
 /* ===== BUTTONS ===== */
 .btn-buy,
 .btn-cart {
@@ -243,3 +273,11 @@ body {
   }
 }
 
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}

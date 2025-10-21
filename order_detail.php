@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 session_start();
+header("Content-Type: text/html; charset=utf-8");
+
 if (!isset($_SESSION['user'])) {
   header("Location: login.php");
   exit;
@@ -29,7 +31,7 @@ if (!$order) {
 
 // ✅ ดึงสินค้าที่อยู่ในออเดอร์นี้
 $stmt = $conn->prepare("
-  SELECT p.name, od.price, od.quantity, pp.title
+  SELECT p.name, od.price, od.quantity, pp.title, od.uid
   FROM order_details od
   JOIN products p ON od.product_id = p.product_id
   JOIN product_prices pp ON od.package_id = pp.id
@@ -59,7 +61,7 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
       <p><strong>ช่องทางชำระเงิน:</strong> <?= htmlspecialchars($order['payment_method']) ?></p>
 
       <!-- ✅ สถานะคำสั่งซื้อ -->
-      <p><strong>สถานะคำสั่งซื้อ:</strong> 
+      <p><strong>สถานะคำสั่งซื้อ:</strong>
         <?php if ($order['order_status'] === 'completed'): ?>
           <span class="badge completed">เสร็จสิ้น</span>
         <?php elseif ($order['order_status'] === 'processing'): ?>
@@ -72,7 +74,7 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
       </p>
 
       <!-- ✅ สถานะการชำระเงิน -->
-      <p><strong>สถานะการชำระเงิน:</strong> 
+      <p><strong>สถานะการชำระเงิน:</strong>
         <?php if ($order['payment_status'] === 'paid'): ?>
           <span class="badge paid">ชำระแล้ว</span>
         <?php elseif ($order['payment_status'] === 'pending'): ?>
@@ -90,10 +92,10 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
     <!-- ✅ แสดงสลิปการชำระเงิน -->
     <?php if ($payment && !empty($payment['slip_path'])): ?>
       <div class="payment-slip">
-        <h4>🧾 หลักฐานการชำระเงิน</h4>
+        <h4>💳 หลักฐานการชำระเงิน</h4>
         <img src="<?= htmlspecialchars($payment['slip_path']) ?>" alt="สลิปการชำระเงิน">
         <p class="slip-status">
-          สถานะสลิป: 
+          สถานะสลิป:
           <?php if ($payment['status'] === 'verified'): ?>
             <span class="badge verified">ยืนยันแล้ว</span>
           <?php elseif ($payment['status'] === 'pending'): ?>
@@ -115,7 +117,7 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
             <th>แพ็กเกจ</th>
             <th>จำนวน</th>
             <th>ราคา</th>
-            <th>รวม</th>
+            <th>รวมย่อย</th>
           </tr>
         </thead>
         <tbody>
@@ -133,6 +135,23 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
         </tbody>
       </table>
 
+      <?php if (!empty($items)): ?>
+        <?php $hasUid = false; foreach ($items as $it) { if (!empty($it['uid'])) { $hasUid = true; break; } } ?>
+        <?php if ($hasUid): ?>
+          <div class="uid-summary" style="margin-top:12px;">
+            <h5>UID ที่ระบุ</h5>
+            <ul style="list-style:none;padding:0;margin:0;display:grid;gap:6px;">
+              <?php foreach ($items as $it): if (empty($it['uid'])) continue; ?>
+                <li style="background:#1a1f2b;border:1px solid #2e3447;border-radius:10px;padding:8px 10px;">
+                  <strong><?= htmlspecialchars($it['name']) ?></strong> (<?= htmlspecialchars($it['title']) ?>)
+                  <div>UID: <?= htmlspecialchars($it['uid']) ?></div>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+      <?php endif; ?>
+
       <div class="order-total">
         💰 รวมทั้งหมด: <strong>฿<?= number_format($total, 2) ?></strong>
       </div>
@@ -143,7 +162,7 @@ $payment = $payStmt->fetch(PDO::FETCH_ASSOC);
       <?php if ($order['payment_status'] === 'unpaid'): ?>
         <a href="payment_gateway.php?method=<?= urlencode($order['payment_method'] ?? 'PromptPay') ?>&id=<?= $order['order_id'] ?>" class="btn pay">💰 ชำระเงิน</a>
       <?php endif; ?>
-      <a href="order_history.php" class="btn back">← กลับไปหน้าคำสั่งซื้อ</a>
+      <a href="order_history.php" class="btn back">← กลับไปหน้าประวัติคำสั่งซื้อ</a>
     </div>
   </div>
 </div>
