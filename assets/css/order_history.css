@@ -1,0 +1,235 @@
+/* ==========================================
+   Ldiwaa+ — Order History (Gray Premium Theme)
+   ========================================== */
+body {
+  background: #0f1115;
+  font-family: "Noto Sans Thai", sans-serif;
+  color: #e2e2e2;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Container ===== */
+.order-history-container {
+  max-width: 950px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.page-title {
+  text-align: center;
+  color: #f5f5f5;
+  font-size: 1.8rem;
+  margin-bottom: 35px;
+  font-weight: 600;
+}
+
+/* ===== Empty State ===== */
+.empty-box {
+  text-align: center;
+  background: #181b23;
+  padding: 50px 25px;
+  border-radius: 14px;
+  border: 1px solid #262a34;
+  color: #aaa;
+}
+
+.empty-box p {
+  margin-bottom: 15px;
+}
+
+/* ===== Order Cards ===== */
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.order-card {
+  background: #181b23;
+  border: 1px solid #2c2f3a;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.05);
+  border-color: #3a3f4b;
+}
+
+/* ===== Header ===== */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-header h4 {
+  color: #fff;
+  margin: 0;
+  font-weight: 600;
+}
+
+.order-date {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* ===== Status ===== */
+.status-box {
+  text-align: right;
+}
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: 1px solid transparent;
+}
+
+/* ปรับให้เป็นโทนเรียบ */
+.badge.paid {
+  background: rgba(60, 179, 113, 0.15);
+  color: #8ef2c3;
+  border-color: rgba(60, 179, 113, 0.25);
+}
+
+.badge.pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: #f4d06f;
+  border-color: rgba(255, 193, 7, 0.2);
+}
+
+.badge.waiting {
+  background: rgba(108, 117, 125, 0.15);
+  color: #b6bcc3;
+  border-color: rgba(108, 117, 125, 0.25);
+}
+
+.badge.failed {
+  background: rgba(220, 53, 69, 0.12);
+  color: #f2939a;
+  border-color: rgba(220, 53, 69, 0.25);
+}
+
+.badge.canceled {
+  background: rgba(52, 58, 64, 0.15);
+  color: #9ca3ad;
+  border-color: rgba(52, 58, 64, 0.25);
+}
+
+/* ===== Body ===== */
+.order-body {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #242833;
+  border-bottom: 1px solid #242833;
+  padding: 14px 0;
+  margin: 12px 0;
+}
+
+.order-body .info p {
+  margin: 4px 0;
+  color: #c3c6ce;
+  font-size: 0.9rem;
+}
+
+.order-body .price {
+  text-align: right;
+}
+
+.order-body .price strong {
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+/* ===== Footer Buttons ===== */
+.order-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+  text-decoration: none;
+  font-weight: 500;
+  color: #e0e0e0;
+  background: #222631;
+  border: 1px solid #2f3440;
+}
+
+.btn:hover {
+  background: #2a2f3c;
+  transform: translateY(-2px);
+  border-color: #3b4150;
+  color: #fff;
+}
+
+/* สีเฉพาะ */
+.btn-green {
+  background: rgba(60, 179, 113, 0.2);
+  color: #a5f0c0;
+  border-color: rgba(60, 179, 113, 0.3);
+}
+
+.btn-blue {
+  background: rgba(13, 110, 253, 0.15);
+  color: #a3caff;
+  border-color: rgba(13, 110, 253, 0.3);
+}
+
+.btn-yellow {
+  background: rgba(255, 193, 7, 0.15);
+  color: #f6da84;
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #3a3f4b;
+  color: #bfc4cf;
+}
+
+.btn-outline:hover {
+  background: #2a2f3a;
+  color: #fff;
+}
+
+/* ปุ่มปิดการใช้งาน */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-gray.disabled {
+  background: #343a40;
+  color: #ccc;
+  border: none;
+}
+
+/* ===== Primary Button ===== */
+.btn-primary {
+  background: #2d3340;
+  color: #fff;
+  border: 1px solid #3d4452;
+  border-radius: 20px;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #3c4454;
+}

@@ -1,0 +1,246 @@
+/* ===================================================
+   GameKey+ — Checkout Page (Dark Gradient Unified Theme)
+   Based on profile.css aesthetic
+   =================================================== */
+
+:root {
+  --bg: #0f1115;
+  --bg2: #171b25;
+  --surface: #1a1f2b;
+  --surface2: #22283a;
+  --text: #f5f7fa;
+  --muted: #a3a9b6;
+  --primary: #00d1ff;
+  --accent: #00ffb3;
+  --accent-dark: #00c38a;
+  --yellow: #ffd166;
+  --red: #ff4d6d;
+  --border: #2e3447;
+  --radius: 16px;
+  --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== PAGE LAYOUT ===== */
+body {
+  background: radial-gradient(circle at 30% top, #1c2435 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: 'Prompt', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 2.2rem;
+  margin: 60px auto;
+  max-width: 1180px;
+  width: 94%;
+}
+
+/* ===== LEFT / RIGHT PANELS ===== */
+.payment-left,
+.payment-right {
+  flex: 1;
+  min-width: 360px;
+  background: var(--surface2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 1.6rem 1.8rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition: 0.3s;
+}
+.payment-left:hover,
+.payment-right:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* ===== HEADINGS ===== */
+h4 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+  color: var(--text);
+  text-shadow: 0 0 6px rgba(0, 209, 255, 0.15);
+}
+
+/* ===== PAYMENT METHODS ===== */
+.method-group {
+  margin-top: 1.2rem;
+}
+
+.method-item {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  transition: 0.25s;
+}
+.method-item:hover {
+  background: #252c3f;
+  box-shadow: 0 0 14px rgba(0, 209, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.method-item input[type="radio"] {
+  transform: scale(1.3);
+  accent-color: var(--primary);
+}
+
+.method-item label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  width: 100%;
+  color: var(--text);
+}
+
+.method-logo {
+  width: 64px;
+  height: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.method-info {
+  display: flex;
+  flex-direction: column;
+}
+.method-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.method-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ===== PAY BUTTON ===== */
+.btn-paynow {
+  width: 100%;
+  margin-top: 1.8rem;
+  padding: 0.95rem;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border: none;
+  color: #021015;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: 0.3s;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 16px rgba(0, 255, 200, 0.3);
+}
+.btn-paynow:hover {
+  box-shadow: 0 0 26px rgba(0, 255, 200, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ===== SUMMARY BOX ===== */
+.summary-box {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  color: var(--text);
+}
+.summary-row.total strong {
+  color: var(--primary);
+  font-size: 1.15rem;
+  text-shadow: 0 0 6px rgba(0, 209, 255, 0.15);
+}
+
+/* ===== PAY BOX (Right Side) ===== */
+.pay-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.4rem 1.6rem;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.05);
+}
+
+.pay-with {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
+}
+.pay-with img {
+  height: 38px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.service-fee,
+.pay-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  margin: 0.6rem 0;
+}
+.pay-total strong {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+/* ===== AGREEMENT ===== */
+.agree-text {
+  margin-top: 1.4rem;
+  font-size: 0.85rem;
+  text-align: center;
+  opacity: 0.9;
+  color: var(--muted);
+}
+.agree-text a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: 0.2s;
+}
+.agree-text a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .checkout-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .payment-left,
+  .payment-right {
+    width: 100%;
+  }
+  .btn-paynow {
+    margin-top: 1.4rem;
+  }
+}

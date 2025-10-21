@@ -1,0 +1,239 @@
+/* ===================================================
+   GameKey+ — Cart Page (Dark Gradient Theme)
+   Profile.css style unified
+   =================================================== */
+
+:root {
+  --bg: #0f1115;
+  --bg2: #171b25;
+  --surface: #1a1f2b;
+  --surface2: #22283a;
+  --text: #f5f7fa;
+  --muted: #a3a9b6;
+  --primary: #00d1ff;
+  --accent: #00ffb3;
+  --green: #23d18b;
+  --yellow: #ffd166;
+  --red: #ff4d6d;
+  --border: #2e3447;
+  --radius: 16px;
+}
+
+/* ===== Layout ===== */
+body {
+  background: radial-gradient(circle at 30% top, #1c2435 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: 'Prompt', sans-serif;
+}
+
+.cart-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 16px;
+}
+
+.cart-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  padding: 28px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ===== Title ===== */
+.cart-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+/* ===== Cart Item ===== */
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, #191e2a 0%, #151922 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cart-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cart-thumb {
+  width: 68px;
+  height: 68px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: #141820;
+}
+
+.cart-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text);
+}
+.cart-detail {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ===== Cart Right ===== */
+.cart-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cart-price {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  padding: 6px 12px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  transition: 0.25s;
+}
+.qty-btn:hover {
+  background: var(--primary);
+  color: #021015;
+}
+
+.cart-quantity span {
+  padding: 0 10px;
+  font-weight: 600;
+}
+
+.cart-subtotal {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cart-remove {
+  color: var(--red);
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: 0.25s;
+}
+.cart-remove:hover {
+  color: #fff;
+  transform: scale(1.2);
+}
+
+/* ===== Summary Section ===== */
+.cart-footer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.cart-summary {
+  background: linear-gradient(180deg, #1c2130 0%, #12151d 100%);
+  border: 1px solid #2f384a;
+  border-radius: 12px;
+  padding: 16px 22px;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.05);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.cart-summary .cart-total {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.15rem;
+}
+
+/* ===== Checkout Button ===== */
+.checkout-btn {
+  margin-top: 20px;
+  display: inline-block;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #021015;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 0 16px rgba(0, 255, 200, 0.35);
+  transition: 0.3s;
+}
+.checkout-btn:hover {
+  box-shadow: 0 0 30px rgba(0, 255, 200, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ===== Empty Cart ===== */
+.empty-cart {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--muted);
+}
+.empty-cart img {
+  width: 160px;
+  opacity: 0.85;
+  margin-bottom: 20px;
+}
+
+/* ===== Checkbox ===== */
+.cart-check {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 780px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .cart-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .cart-summary {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

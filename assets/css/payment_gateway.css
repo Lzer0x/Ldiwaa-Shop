@@ -1,0 +1,237 @@
+/* ===================================================
+   GameKey+ — Payment Gateway (Dark Neon Unified Theme)
+   =================================================== */
+
+:root {
+  --bg: #0f1115;
+  --bg2: #171b25;
+  --surface: #1a1f2b;
+  --surface2: #22283a;
+  --text: #f5f7fa;
+  --muted: #a3a9b6;
+  --primary: #00d1ff;
+  --accent: #00ffb3;
+  --yellow: #ffd166;
+  --red: #ff4d6d;
+  --border: #2e3447;
+  --radius: 16px;
+  --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+body {
+  background: radial-gradient(circle at 30% top, #1c2435 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: "Prompt", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== CONTAINER ===== */
+.gateway-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin: 60px auto;
+  max-width: 1180px;
+  width: 94%;
+  flex-wrap: wrap;
+}
+
+/* ===== BOXES ===== */
+.gateway-left,
+.gateway-right {
+  flex: 1;
+  min-width: 350px;
+  background: var(--surface2);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  transition: 0.3s;
+}
+.gateway-left:hover,
+.gateway-right:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+/* ===== HEADERS ===== */
+h4 {
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 6px rgba(0, 209, 255, 0.2);
+  font-weight: 600;
+}
+
+/* ===== QR CODE ===== */
+.qr-box {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.qr-box img {
+  width: 240px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+.qr-box p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ===== TIMER ===== */
+.timer {
+  font-size: 1rem;
+  color: var(--yellow);
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 6px rgba(255, 214, 102, 0.3);
+}
+
+/* ===== SUMMARY ===== */
+.summary-box {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.summary-row.total {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* ===== PAYWITH ===== */
+.paywith-box {
+  margin-top: 25px;
+  text-align: right;
+}
+.paywith-box img {
+  width: 80px;
+  background: #fff;
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== FILE INPUT ===== */
+.file-input {
+  display: block;
+  width: 80%;
+  margin: 12px auto;
+  padding: 10px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+  outline: none;
+  transition: 0.3s;
+}
+.file-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.3);
+}
+
+/* ===== UPLOAD BUTTON ===== */
+.btn-upload {
+  display: inline-block;
+  margin: 10px auto;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #021015;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 0 16px rgba(0, 255, 200, 0.3);
+}
+.btn-upload:hover {
+  box-shadow: 0 0 26px rgba(0, 255, 200, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ===== BACK BUTTON ===== */
+.btn-back {
+  display: block;
+  margin: 14px auto 0;
+  width: 80%;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 10px;
+  background: var(--red);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(255, 77, 109, 0.3);
+}
+.btn-back:hover {
+  background: #ff6f91;
+  box-shadow: 0 0 18px rgba(255, 77, 109, 0.5);
+}
+
+/* ===== ALERT ===== */
+.alert-success {
+  background: rgba(0, 255, 200, 0.08);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* ===== NOTE ===== */
+.note {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 15px;
+  opacity: 0.9;
+}
+
+/* ===== ALIGNMENT ===== */
+.gateway-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+.gateway-left h5 {
+  width: 100%;
+  text-align: center;
+  margin-top: 15px;
+  color: var(--text);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .gateway-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .gateway-left,
+  .gateway-right {
+    width: 90%;
+  }
+  .paywith-box {
+    text-align: center;
+  }
+}

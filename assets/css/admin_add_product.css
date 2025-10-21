@@ -1,0 +1,57 @@
+body {
+  background: #0d0d0d;
+  font-family: "Prompt", sans-serif;
+  color: #ddd;
+}
+
+.card {
+  border-radius: 12px;
+  background: #121212;
+  color: #fff;
+}
+
+.card-header {
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.form-control, .form-select {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #00ffa9;
+  box-shadow: 0 0 8px rgba(0,255,200,0.4);
+}
+
+.pkg-item {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pkg-item input {
+  flex: 1;
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-danger {
+  background: #c0392b;
+  border: none;
+}
+
+.btn-outline-success {
+  color: #00ffa9;
+  border-color: #00ffa9;
+}
+
+.btn-outline-success:hover {
+  background: #00ffa9;
+  color: #000;
+}

@@ -1,0 +1,50 @@
+body {
+  background: #0d0d0d;
+  color: #ddd;
+  font-family: "Prompt", sans-serif;
+}
+
+.card {
+  border-radius: 12px;
+  background: #121212;
+  color: #fff;
+}
+
+.table {
+  background: #181818;
+  color: #ddd;
+}
+
+.table th {
+  background: #1f1f1f;
+  color: #00ffa9;
+  border: none;
+}
+
+.table td {
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 6px 10px;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.alert {
+  border-radius: 8px;
+  background: #1c1c1c;
+  color: #00ffa9;
+  border: 1px solid #333;
+}

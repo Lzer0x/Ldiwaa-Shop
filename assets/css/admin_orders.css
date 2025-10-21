@@ -1,0 +1,200 @@
+/* ===================================================
+   Ldiwaa+ — Admin Orders Page (Dark Neon Unified)
+   =================================================== */
+
+:root {
+  --bg: #0f1115;
+  --bg2: #171b25;
+  --surface: #1a1f2b;
+  --surface2: #22283a;
+  --text: #f5f7fa;
+  --muted: #a3a9b6;
+  --primary: #00d1ff;
+  --accent: #00ffb3;
+  --green: #23d18b;
+  --yellow: #ffd166;
+  --red: #ff4d6d;
+  --border: #2e3447;
+  --radius: 14px;
+}
+
+/* ===== Base Layout ===== */
+body {
+  background: radial-gradient(circle at top left, #1c2435 0%, var(--bg) 70%);
+  color: var(--text);
+  font-family: "Prompt", sans-serif;
+}
+
+/* ===== Container ===== */
+.container {
+  padding-top: 40px;
+}
+
+/* ===== Card ===== */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+}
+.card-header {
+  background: linear-gradient(90deg, #1e2433, #161a25);
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 16px 22px;
+}
+.card-header h4 {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ===== Table ===== */
+.table {
+  width: 100%;
+  color: var(--text);
+  border-collapse: collapse;
+}
+.table thead {
+  background: linear-gradient(90deg, #141820 0%, #1d2333 100%);
+  border-bottom: 1px solid var(--border);
+}
+.table th,
+.table td {
+  padding: 12px 14px;
+  text-align: center;
+  border-bottom: 1px solid #2e3447;
+  vertical-align: middle;
+}
+.table-striped tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+.table-hover tbody tr:hover {
+  background: #1e2538;
+  transition: 0.25s;
+}
+
+/* ===== Badge ===== */
+.badge {
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 600;
+  text-transform: none;
+}
+.bg-success {
+  background: var(--green) !important;
+  color: #fff !important;
+}
+.bg-warning {
+  background: var(--yellow) !important;
+  color: #111 !important;
+}
+.bg-danger {
+  background: var(--red) !important;
+  color: #fff !important;
+}
+.bg-primary {
+  background: var(--primary) !important;
+  color: #021015 !important;
+}
+.bg-info {
+  background: var(--accent) !important;
+  color: #021015 !important;
+}
+.bg-dark {
+  background: var(--surface2) !important;
+  color: var(--text) !important;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 600;
+  transition: 0.25s ease;
+  text-decoration: none;
+  border: none;
+}
+.btn-outline-primary {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+.btn-outline-primary:hover {
+  background: var(--primary);
+  color: #021015;
+  box-shadow: 0 0 10px rgba(0, 209, 255, 0.3);
+}
+.btn-outline-info {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+.btn-outline-info:hover {
+  background: var(--accent);
+  color: #021015;
+  box-shadow: 0 0 10px rgba(0, 255, 179, 0.4);
+}
+.btn-success {
+  background: var(--green);
+  color: #fff;
+}
+.btn-success:hover {
+  box-shadow: 0 0 10px rgba(35, 209, 139, 0.4);
+}
+.btn-warning {
+  background: var(--yellow);
+  color: #111;
+}
+.btn-warning:hover {
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
+}
+.btn-danger {
+  background: var(--red);
+  color: #fff;
+}
+.btn-danger:hover {
+  box-shadow: 0 0 10px rgba(255, 77, 109, 0.4);
+}
+.btn-outline-light {
+  border: 1px solid #ccc;
+  color: #eee;
+  background: transparent;
+}
+.btn-outline-light:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* ===== Alerts ===== */
+.alert {
+  border-radius: 10px;
+  padding: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+.alert-success {
+  background: rgba(35, 209, 139, 0.1);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.alert-warning {
+  background: rgba(255, 209, 102, 0.1);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+}
+.alert-danger {
+  background: rgba(255, 77, 109, 0.1);
+  border: 1px solid var(--red);
+  color: var(--red);
+}
+
+/* ===== Utility ===== */
+.table-responsive {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.d-flex.gap-1 {
+  gap: 6px;
+}

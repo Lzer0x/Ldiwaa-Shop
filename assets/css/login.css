@@ -1,0 +1,173 @@
+/* ===================================================
+   Ldiwaa+ — Login Page (2-Column Neon Theme)
+   =================================================== */
+:root {
+  --bg: #0f1115;
+  --surface: #171b25;
+  --surface2: #1a1f2b;
+  --text: #f5f7fa;
+  --muted: #a3a9b6;
+  --primary: #00d1ff;
+  --accent: #00ffb3;
+  --border: #2e3447;
+  --radius: 18px;
+}
+
+/* ===== Base ===== */
+body {
+  background: radial-gradient(circle at top left, #1d2536 0%, var(--bg) 70%);
+  font-family: "Prompt", sans-serif;
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Layout ===== */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  max-width: 1100px;
+  margin: 120px auto 80px;
+  padding: 0 20px;
+  flex-wrap: wrap;
+}
+
+/* ===== Left (Welcome Text Centered) ===== */
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.login-left h2 {
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(0, 255, 179, 0.4);
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.login-left p {
+  color: #b9c1d0;
+  margin-top: 12px;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  max-width: 400px;
+}
+
+/* ซ่อนภาพออก */
+.login-illustration {
+  display: none;
+}
+
+/* ===== Right (Form Card) ===== */
+.login-right {
+  flex: 0.9;
+  min-width: 350px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+  color: white;
+}
+
+.card h4 {
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--text);
+  text-shadow: 0 0 6px rgba(0, 209, 255, 0.25);
+}
+
+/* ===== Inputs ===== */
+.form-control {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: 0.25s;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(0, 209, 255, 0.3);
+  background: #1c2230;
+}
+
+/* ===== Button ===== */
+.btn-login {
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #021015;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+}
+
+/* ===== Alert ===== */
+.alert {
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.alert-danger {
+  background: rgba(255, 77, 109, 0.1);
+  border: 1px solid #ff4d6d;
+  color: #ff4d6d;
+}
+
+/* ===== Link ===== */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: 0.25s;
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
+    gap: 40px;
+  }
+
+  .login-left {
+    text-align: center;
+  }
+
+  .card {
+    width: 100%;
+  }
+}

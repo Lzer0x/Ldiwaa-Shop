@@ -1,0 +1,39 @@
+body {
+  background: #0d0d0d;
+  color: #ddd;
+  font-family: "Prompt", sans-serif;
+}
+
+.card {
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 12px;
+}
+
+.table {
+  color: #ccc;
+}
+
+.table th {
+  background: #222;
+  color: #fff;
+  border-color: #333;
+}
+
+.table td {
+  border-color: #333;
+}
+
+.btn {
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.alert {
+  border-radius: 8px;
+}

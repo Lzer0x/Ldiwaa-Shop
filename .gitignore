@@ -1,0 +1,45 @@
+# PHP / Composer
+/vendor/
+/.env
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE / Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# XAMPP / uploads
+uploads/
+uploads/*
+!uploads/.htaccess
+
+# Composer
+composer.lock
+
+# Generated files
+*.cache
+
+# Ignore SQL dumps (if any)
+*.sql
+
+# Ignore system files
+ehthumbs.db
+Desktop.ini
+
+# PHPStorm
+/.idea
+
+# Allow images and assets
+!uploads/products/
+!uploads/slips/
