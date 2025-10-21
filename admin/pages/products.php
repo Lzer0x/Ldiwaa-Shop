@@ -1,21 +1,12 @@
 <?php
-session_start();
-require_once __DIR__ . '/../includes/auth_user.php';
-include __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-  echo "<div class='alert alert-danger text-center mt-5'>สำหรับผู้ดูแลระบบเท่านั้น</div>";
-  include __DIR__ . '/../includes/footer.php';
-  exit;
-}
+// $conn ถูกส่งมาจาก admin.php
 
 if (isset($_GET['delete'])) {
   $id = intval($_GET['delete']);
   $conn->prepare("DELETE FROM products WHERE product_id=?")->execute([$id]);
   $conn->prepare("DELETE FROM product_prices WHERE product_id=?")->execute([$id]);
   $_SESSION['flash_message'] = "ลบสินค้าเรียบร้อย";
-  header("Location: products.php");
+  header("Location: admin.php?page=products"); // <-- อัปเดต
   exit;
 }
 
@@ -23,7 +14,7 @@ if (isset($_GET['toggle'])) {
   $id = intval($_GET['toggle']);
   $conn->query("UPDATE products SET status = IF(status='active', 'inactive', 'active') WHERE product_id=$id");
   $_SESSION['flash_message'] = "สลับสถานะสินค้าแล้ว";
-  header("Location: products.php");
+  header("Location: admin.php?page=products"); // <-- อัปเดต
   exit;
 }
 
@@ -42,8 +33,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="card shadow-sm border-0">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">จัดการสินค้า</h4>
-      <a href="add_product.php" class="btn btn-success btn-sm">➕ เพิ่มสินค้าใหม่</a>
-    </div>
+      <a href="admin.php?page=add_product" class="btn btn-success btn-sm">➕ เพิ่มสินค้าใหม่</a> </div>
 
     <div class="card-body">
       <?php if (isset($_SESSION['flash_message'])): ?>
@@ -67,8 +57,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if ($products): foreach ($products as $p): ?>
               <tr>
                 <td><?= $p['product_id'] ?></td>
-                <td><img src="<?= htmlspecialchars($p['image_url'] ?: 'images/sample_product.jpg') ?>" width="60" height="60" style="border-radius:8px;object-fit:cover;"></td>
-                <td><?= htmlspecialchars($p['name']) ?></td>
+                <td><img src="../<?= htmlspecialchars($p['image_url'] ?: 'images/sample_product.jpg') ?>" width="60" height="60" style="border-radius:8px;object-fit:cover;"></td> <td><?= htmlspecialchars($p['name']) ?></td>
                 <td><?= htmlspecialchars($p['category_name'] ?? '-') ?></td>
                 <td>฿<?= number_format($p['min_price'], 2) ?></td>
                 <td>
@@ -80,9 +69,9 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </td>
                 <td>
                   <div class="d-flex justify-content-center gap-1 flex-wrap">
-                    <a href="edit_product.php?id=<?= $p['product_id'] ?>" class="btn btn-sm btn-primary">แก้ไข</a>
-                    <a href="?toggle=<?= $p['product_id'] ?>" class="btn btn-sm btn-warning">สลับสถานะ</a>
-                    <a href="?delete=<?= $p['product_id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('ยืนยันลบสินค้า?')">ลบ</a>
+                    <a href="admin.php?page=edit_product&id=<?= $p['product_id'] ?>" class="btn btn-sm btn-primary">แก้ไข</a>
+                    <a href="admin.php?page=products&toggle=<?= $p['product_id'] ?>" class="btn btn-sm btn-warning">สลับสถานะ</a>
+                    <a href="admin.php?page=products&delete=<?= $p['product_id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('ยืนยันลบสินค้า?')">ลบ</a>
                   </div>
                 </td>
               </tr>
@@ -95,5 +84,3 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 </div>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

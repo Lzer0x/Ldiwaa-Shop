@@ -1,0 +1,150 @@
+/* assets/css/admin_dashboard.css */
+
+/* --- ตัวแปรสี (อิงจากรูปตัวอย่างและ Bootstrap dark) --- */
+:root {
+  --color-bg: #f8f9fa; /* สีพื้นหลังหลัก (เทาอ่อน) */
+  --color-sidebar-bg: #212529; /* สี Sidebar (ดำ/เทาเข้ม) */
+  --color-sidebar-text: #f1f1f1; /* สีตัวอักษร Sidebar */
+  --color-sidebar-hover: #343a40; /* สีตอน Hover */
+  --color-sidebar-active: #0d6efd; /* สีลิงก์ที่ Active (น้ำเงิน Bootstrap) */
+  --color-card-bg: #ffffff; /* สีพื้นหลังการ์ด (ขาว) */
+  --color-text-primary: #333;
+  --color-text-secondary: #6c757d;
+  --color-border: #dee2e6;
+  --color-primary-accent: #4e73df; /* สีน้ำเงิน/ม่วง จากตัวอย่าง */
+  --color-success-accent: #1cc88a; /* สีเขียว */
+  --color-warning-accent: #f6c23e; /* สีเหลือง */
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: 'Nunito', sans-serif; /* ใช้ Font ที่ดู Modern (ถ้ามี) */
+}
+
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* --- Sidebar Navigation --- */
+.sidebar {
+  width: 240px;
+  background-color: var(--color-sidebar-bg);
+  color: var(--color-sidebar-text);
+  flex-shrink: 0;
+  padding-top: 1rem;
+}
+
+.sidebar-brand {
+  display: block;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-sidebar-text);
+  text-decoration: none;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+.sidebar-nav .list-group-item {
+  background-color: transparent;
+  color: var(--color-sidebar-text);
+  border: none;
+  border-radius: 0;
+  padding: 0.75rem 1.5rem;
+}
+
+.sidebar-nav .list-group-item:hover {
+  background-color: var(--color-sidebar-hover);
+}
+
+.sidebar-nav .list-group-item.active {
+  background-color: var(--color-sidebar-active);
+  font-weight: bold;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.main-header h1 {
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--color-sidebar-text);
+}
+
+/* --- Stat Cards (แบบใหม่) --- */
+.stat-card {
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1.75rem 0 rgba(58, 59, 69, 0.2);
+}
+
+.stat-card .stat-title {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.stat-card .stat-details {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+/* --- เพิ่มสีขอบซ้ายให้ Stat Cards (เหมือนในตัวอย่าง) --- */
+.stat-card.border-left-primary { border-left: 4px solid var(--color-primary-accent); }
+.stat-card.border-left-success { border-left: 4px solid var(--color-success-accent); }
+.stat-card.border-left-warning { border-left: 4px solid var(--color-warning-accent); }
+
+
+/* --- Cards for Chart and Table --- */
+.content-card {
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  margin-bottom: 1.5rem;
+}
+
+.content-card-header {
+  padding: 1rem 1.25rem;
+  background-color: #fdfdfd;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: bold;
+  color: var(--color-primary-accent);
+}
+
+.content-card-body {
+  padding: 1.25rem;
+}
+
+/* --- Table --- */
+.table-responsive {
+  margin-top: 1rem;
+}

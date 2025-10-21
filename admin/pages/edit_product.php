@@ -1,20 +1,10 @@
 <?php
-session_start();
-require_once __DIR__ . '/../includes/auth_user.php';
-include __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/csrf.php';
-
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-  echo "<div class='alert alert-danger text-center mt-5'>สำหรับผู้ดูแลระบบเท่านั้น</div>";
-  include __DIR__ . '/../includes/footer.php';
-  exit;
-}
+// $conn ถูกส่งมาจาก admin.php
+include __DIR__ . '/../../includes/csrf.php'; // <-- อัปเดต path
 
 $product_id = intval($_GET['id'] ?? 0);
 if (!$product_id) {
   echo "<div class='alert alert-warning text-center mt-5'>ไม่พบสินค้า</div>";
-  include __DIR__ . '/../includes/footer.php';
   exit;
 }
 
@@ -23,7 +13,6 @@ $stmt->execute([$product_id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$product) {
   echo "<div class='alert alert-danger text-center mt-5'>ไม่พบสินค้า</div>";
-  include __DIR__ . '/../includes/footer.php';
   exit;
 }
 
@@ -34,7 +23,6 @@ $packages = $pkgStmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
   if (!csrf_verify($_POST['csrf'] ?? '')) {
     echo "<div class='alert alert-danger text-center'>CSRF token invalid</div>";
-    include __DIR__ . '/../includes/footer.php';
     exit;
   }
 
@@ -46,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
   $image = $product['image_url'];
 
   if (!empty($_FILES['image']['name'])) {
-    $dir = __DIR__ . '/../uploads/products/';
+    $dir = __DIR__ . '/../../uploads/products/'; // <-- อัปเดต path
     if (!is_dir($dir)) mkdir($dir, 0777, true);
     $fname = time() . '_' . basename($_FILES['image']['name']);
     $path = $dir . $fname;
@@ -59,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
   $update->execute([$name, $category_id, $region, $desc, $image, $status, $product_id]);
 
   $_SESSION['flash_message'] = "อัปเดตสินค้าเรียบร้อย";
-  header("Location: edit_product.php?id=$product_id");
+  header("Location: admin.php?page=edit_product&id=$product_id"); // <-- อัปเดต
   exit;
 }
 ?>
@@ -70,8 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
   <div class="card shadow border-0">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4>แก้ไขสินค้า: <?= htmlspecialchars($product['name']) ?></h4>
-      <a href="products.php" class="btn btn-light btn-sm">⬅ กลับ</a>
-    </div>
+      <a href="admin.php?page=products" class="btn btn-light btn-sm">⬅ กลับ</a> </div>
 
     <div class="card-body">
       <?php if (!empty($_SESSION['flash_message'])): ?>
@@ -116,8 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
             <label class="form-label">รูปภาพ</label>
             <input type="file" name="image" class="form-control" accept="image/*">
             <?php if (!empty($product['image_url'])): ?>
-              <img src="<?= htmlspecialchars($product['image_url']) ?>" class="mt-2 rounded" style="width:100px;">
-            <?php endif; ?>
+              <img src="../<?= htmlspecialchars($product['image_url']) ?>" class="mt-2 rounded" style="width:100px;"> <?php endif; ?>
           </div>
         </div>
 
@@ -142,6 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_product'])) {
 </div>
 
 <script>
+// Path ของ AJAX `../ajax_pkg_action.php` ยังคงถูกต้อง
+// เพราะมันอ้างอิงจาก URL (admin.php) ซึ่งอยู่ใน /admin/
 function addPkg() {
   const pkgList = document.getElementById('pkg-list');
   const div = document.createElement('div');
@@ -186,5 +174,3 @@ function deletePkg(id, el) {
   });
 }
 </script>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

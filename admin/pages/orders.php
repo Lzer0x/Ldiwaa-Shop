@@ -1,14 +1,6 @@
 <?php
-session_start();
-include __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/redeem_service.php';
-
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-  echo "<div class='alert alert-danger text-center mt-5'>สำหรับผู้ดูแลระบบเท่านั้น</div>";
-  include __DIR__ . '/../includes/footer.php';
-  exit;
-}
+// $conn ถูกส่งมาจาก admin.php
+require_once __DIR__ . '/../../includes/redeem_service.php'; // <-- อัปเดต path
 
 if (isset($_POST['action'])) {
   $order_id = $_POST['order_id'];
@@ -20,24 +12,24 @@ if (isset($_POST['action'])) {
     $assign = assignRedeemKeys($conn, (int)$order_id);
     if (!empty($assign['success'])) {
       $conn->prepare("UPDATE orders SET order_status='completed' WHERE order_id=?")->execute([$order_id]);
-      header("Location: orders.php?msg=paid_assigned");
+      header("Location: admin.php?page=orders&msg=paid_assigned"); // <-- อัปเดต
     } else {
       $conn->prepare("UPDATE orders SET order_status='processing' WHERE order_id=?")->execute([$order_id]);
-      header("Location: orders.php?msg=paid_pending");
+      header("Location: admin.php?page=orders&msg=paid_pending"); // <-- อัปเดต
     }
     exit;
   }
 
   if ($_POST['action'] === 'mark_pending') {
     $conn->prepare("UPDATE orders SET payment_status='pending', order_status='processing' WHERE order_id=?")->execute([$order_id]);
-    header("Location: orders.php?msg=pending");
+    header("Location: admin.php?page=orders&msg=pending"); // <-- อัปเดต
     exit;
   }
 
   if ($_POST['action'] === 'mark_cancelled') {
     $conn->prepare("UPDATE orders SET payment_status='failed', order_status='failed' WHERE order_id=?")->execute([$order_id]);
     $conn->prepare("UPDATE payments SET status='rejected' WHERE order_id=?")->execute([$order_id]);
-    header("Location: orders.php?msg=cancelled");
+    header("Location: admin.php?page=orders&msg=cancelled"); // <-- อัปเดต
     exit;
   }
 }
@@ -70,8 +62,7 @@ unset($oRow);
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">จัดการคำสั่งซื้อ</h4>
       <div>
-        <a href="dashboard.php" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a>
-        <a href="../index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
+        <a href="admin.php?page=dashboard" class="btn btn-outline-light btn-sm me-2">📊 แดชบอร์ด</a> <a href="../index.php" class="btn btn-outline-light btn-sm">🏠 กลับหน้าหลัก</a>
       </div>
     </div>
 
@@ -139,7 +130,7 @@ unset($oRow);
                       <a href="<?= htmlspecialchars($order['slip_image']) ?>" target="_blank" class="btn btn-sm btn-outline-info">สลิป</a>
                     <?php endif; ?>
                     <?php if ($order['payment_status'] !== 'paid'): ?>
-                      <form method="POST">
+                      <form method="POST"> 
                         <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
                         <button name="action" value="mark_paid" class="btn btn-sm btn-success">ชำระแล้ว</button>
                       </form>
@@ -162,5 +153,3 @@ unset($oRow);
     </div>
   </div>
 </div>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

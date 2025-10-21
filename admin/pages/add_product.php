@@ -1,20 +1,11 @@
 <?php
-session_start();
-require_once __DIR__ . '/../includes/auth_user.php';
-include __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/csrf.php';
-
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-  echo "<div class='alert alert-danger text-center mt-5'>สำหรับผู้ดูแลระบบเท่านั้น</div>";
-  include __DIR__ . '/../includes/footer.php';
-  exit;
-}
+// $conn ถูกส่งมาจาก admin.php
+include __DIR__ . '/../../includes/csrf.php'; // <-- อัปเดต path
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!csrf_verify($_POST['csrf'] ?? '')) {
     echo "<div class='alert alert-danger text-center'>CSRF token invalid</div>";
-    include __DIR__ . '/../includes/footer.php';
+    include __DIR__ . '/../../includes/footer.php'; // <-- อัปเดต path
     exit;
   }
 
@@ -56,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $conn->commit();
     $_SESSION['flash_message'] = "เพิ่มสินค้าเรียบร้อย!";
-    header("Location: products.php");
+    header("Location: admin.php?page=products"); // <-- อัปเดต
     exit;
   } catch (Exception $e) {
     $conn->rollBack();
@@ -152,5 +143,3 @@ function addPkg() {
 }
 function removePkg(btn) { btn.parentElement.remove(); }
 </script>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -1,21 +1,12 @@
 <?php
-session_start();
-require_once __DIR__ . '/../includes/auth_user.php';
-include __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-  echo "<div class='alert alert-danger text-center mt-5'>สำหรับผู้ดูแลระบบเท่านั้น</div>";
-  include __DIR__ . '/../includes/footer.php';
-  exit;
-}
+// $conn ถูกส่งมาจาก admin.php
 
 if (isset($_GET['delete'])) {
     $uid = intval($_GET['delete']);
     $stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
     $stmt->execute([$uid]);
     $_SESSION['flash_message'] = "ลบผู้ใช้ #$uid เรียบร้อย";
-    header("Location: users.php");
+    header("Location: admin.php?page=users"); // <-- อัปเดต
     exit;
 }
 
@@ -23,7 +14,7 @@ if (isset($_GET['toggle'])) {
     $uid = intval($_GET['toggle']);
     $conn->query("UPDATE users SET status = IF(status='active','banned','active') WHERE user_id = $uid");
     $_SESSION['flash_message'] = "สลับสถานะผู้ใช้แล้ว";
-    header("Location: users.php");
+    header("Location: admin.php?page=users"); // <-- อัปเดต
     exit;
 }
 
@@ -36,8 +27,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll(
   <div class="card shadow border-0">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4 class="m-0">จัดการผู้ใช้</h4>
-      <a href="dashboard.php" class="btn btn-light btn-sm">⬅ กลับ</a>
-    </div>
+      <a href="admin.php?page=dashboard" class="btn btn-light btn-sm">⬅ กลับ</a> </div>
 
     <div class="card-body">
       <?php if (isset($_SESSION['flash_message'])): ?>
@@ -84,10 +74,10 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll(
                   </td>
                   <td><?= htmlspecialchars($u['created_at']) ?></td>
                   <td>
-                    <a href="edit_user.php?id=<?= $u['user_id'] ?>" class="btn btn-sm btn-outline-primary">แก้ไข</a>
-                    <a href="users.php?toggle=<?= $u['user_id'] ?>" class="btn btn-sm btn-outline-warning" onclick="return confirm('ยืนยันสลับสถานะผู้ใช้?')">สลับสถานะ</a>
+                    <a href="admin.php?page=edit_user&id=<?= $u['user_id'] ?>" class="btn btn-sm btn-outline-primary">แก้ไข</a>
+                    <a href="admin.php?page=users&toggle=<?= $u['user_id'] ?>" class="btn btn-sm btn-outline-warning" onclick="return confirm('ยืนยันสลับสถานะผู้ใช้?')">สลับสถานะ</a>
                     <?php if ($u['role'] !== 'admin'): ?>
-                      <a href="users.php?delete=<?= $u['user_id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('ยืนยันลบผู้ใช้?')">ลบ</a>
+                      <a href="admin.php?page=users&delete=<?= $u['user_id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('ยืนยันลบผู้ใช้?')">ลบ</a>
                     <?php endif; ?>
                   </td>
                 </tr>
@@ -99,5 +89,3 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll(
     </div>
   </div>
 </div>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -1,18 +1,8 @@
 <?php
-session_start();
-require_once __DIR__ . '/../includes/auth_user.php';
-include __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-  echo "<div class='alert alert-danger text-center mt-5'>สำหรับผู้ดูแลระบบเท่านั้น</div>";
-  include __DIR__ . '/../includes/footer.php';
-  exit;
-}
+// $conn ถูกส่งมาจาก admin.php
 
 if (!isset($_GET['id'])) {
   echo "<div class='alert alert-warning text-center mt-5'>ไม่พบผู้ใช้</div>";
-  include __DIR__ . '/../includes/footer.php';
   exit;
 }
 
@@ -23,7 +13,6 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
   echo "<div class='alert alert-danger text-center mt-5'>ไม่พบผู้ใช้</div>";
-  include __DIR__ . '/../includes/footer.php';
   exit;
 }
 
@@ -43,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $update->execute([$username, $email, $role, $status, $user_id]);
     }
     $_SESSION['flash_message'] = "อัปเดตผู้ใช้เรียบร้อย!";
-    header("Location: users.php");
+    header("Location: admin.php?page=users"); // <-- อัปเดต
     exit;
   } catch (Exception $e) {
     echo "<div class='alert alert-danger text-center mt-3'>Error: {$e->getMessage()}</div>";
@@ -57,8 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="card shadow border-0">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h4>แก้ไขผู้ใช้</h4>
-      <a href="users.php" class="btn btn-light btn-sm">⬅ กลับ</a>
-    </div>
+      <a href="admin.php?page=users" class="btn btn-light btn-sm">⬅ กลับ</a> </div>
 
     <div class="card-body">
       <form method="POST">
@@ -95,5 +83,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </div>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

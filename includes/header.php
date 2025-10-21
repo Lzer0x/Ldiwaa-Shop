@@ -90,7 +90,7 @@ $base = $isAdminPath ? '../' : '';
       </a>
 
       <?php if($_SESSION['user']['role'] === 'admin'): ?>
-        <a href="<?= $base ?>admin/dashboard.php" class="btn-pill btn-admin nav-btn">
+        <a href="<?= $base ?>admin/admin.php" class="btn-pill btn-admin nav-btn">
           <i class="bi bi-bag-check"></i>
           <span>Dashboard</span>
         </a>
