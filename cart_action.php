@@ -100,7 +100,7 @@ elseif ($action === "buy") {
         'quantity' => 1
     ];
 
-    // ✅ บันทึกใน DB ด้วย (ในกรณีซื้อทันที)
+    // ✅ บันทึกใน DB ด้วย(ในกรณีซื้อทันที)
     if ($user_id) {
         // ล้างของเก่าก่อน
         $conn->prepare("DELETE FROM carts WHERE user_id = ?")->execute([$user_id]);
