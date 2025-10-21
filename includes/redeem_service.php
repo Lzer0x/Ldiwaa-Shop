@@ -54,6 +54,7 @@ function assignRedeemKeys(PDO $conn, int $orderId): array {
 
         foreach ($items as $row) {
             $pid = (int)$row['product_id'];
+            $pkg = isset($row['package_id']) ? (int)$row['package_id'] : null;
             $already = (int)($assignedCount[$pid] ?? 0);
             $need = max(0, (int)$row['quantity'] - $already);
             if ($need === 0) { continue; }
@@ -61,11 +62,12 @@ function assignRedeemKeys(PDO $conn, int $orderId): array {
             // Build SELECT with literal LIMIT for compatibility
             $limit = (int)$need;
             $sql = "SELECT key_id, key_code FROM redeem_keys
-                    WHERE product_id = ? AND status = 'unused'
-                    ORDER BY key_id ASC
+                    WHERE product_id = ? AND (package_id = ? OR package_id IS NULL) AND status = 'unused'
+                    ORDER BY (package_id IS NULL) ASC, key_id ASC
                     LIMIT $limit FOR UPDATE";
             $sel = $conn->prepare($sql);
             $sel->bindValue(1, $pid, PDO::PARAM_INT);
+            $sel->bindValue(2, $pkg, $pkg === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
             $sel->execute();
             $keys = $sel->fetchAll(PDO::FETCH_ASSOC);
 

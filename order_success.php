@@ -2,6 +2,7 @@
 session_start();
 include 'includes/db_connect.php';
 include 'includes/header.php';
+require_once 'includes/redeem_service.php';
 
 // ✅ ตรวจว่ามีรหัสคำสั่งซื้อใน URL ไหม
 if (!isset($_GET['id'])) {
@@ -59,47 +60,27 @@ $slipPath = $slip->fetchColumn();
 // ✅ ตรวจโค้ดรีดีม (เหมือนเดิม)
 $redeemCodes = [];
 if ($order['payment_status'] === 'paid') {
-    $checkRedeem = $conn->prepare("SELECT COUNT(*) FROM order_redeems WHERE order_id = ?");
-    $checkRedeem->execute([$order_id]);
-    $alreadyRedeemed = $checkRedeem->fetchColumn();
+    // Try to assign any remaining keys (idempotent)
+    $res = assignRedeemKeys($conn, $order_id);
+    // If after assignment there are no shortages, mark completed
+    if (!empty($res['success']) && empty($res['shortages']) && ($order['order_status'] ?? '') === 'processing') {
+        $conn->prepare("UPDATE orders SET order_status='completed' WHERE order_id=?")->execute([$order_id]);
+        $order['order_status'] = 'completed';
+    }
 
-    if ($alreadyRedeemed == 0) {
-        foreach ($details as $d) {
-            $product_id = $d['product_id'];
-            $qty = $d['quantity'];
-            $redeemStmt = $conn->prepare("
-                SELECT key_code 
-                FROM redeem_keys 
-                WHERE product_id = ? AND status = 'unused' 
-                ORDER BY key_id ASC 
-                LIMIT $qty
-            ");
-            $redeemStmt->execute([$product_id]);
-            $codes = $redeemStmt->fetchAll(PDO::FETCH_COLUMN);
-
-            if (!empty($codes)) {
-                $keyLabel = $d['name'] . ' (' . $d['title'] . ')';
-                $redeemCodes[$keyLabel] = $codes;
-                $updateStmt = $conn->prepare("UPDATE redeem_keys SET status = 'used', used_by = ?, used_at = NOW() WHERE key_code = ?");
-                foreach ($codes as $c) $updateStmt->execute([$order['user_id'], $c]);
-                $insertRedeem = $conn->prepare("INSERT INTO order_redeems (order_id, product_id, codes, created_at) VALUES (?, ?, ?, NOW())");
-                $insertRedeem->execute([$order_id, $product_id, implode(',', $codes)]);
-            }
-        }
-    } else {
-        $fetchRedeem = $conn->prepare("
-            SELECT r.product_id, r.codes, p.name, pp.title
-            FROM order_redeems r
-            JOIN products p ON r.product_id = p.product_id
-            JOIN order_details d ON d.order_id = r.order_id AND d.product_id = r.product_id
-            JOIN product_prices pp ON d.package_id = pp.id
-            WHERE r.order_id = ?
-        ");
-        $fetchRedeem->execute([$order_id]);
-        while ($r = $fetchRedeem->fetch(PDO::FETCH_ASSOC)) {
-            $keyLabel = $r['name'] . ' (' . $r['title'] . ')';
-            $redeemCodes[$keyLabel] = explode(',', $r['codes']);
-        }
+    // Fetch codes for display
+    $fetchRedeem = $conn->prepare("
+        SELECT r.product_id, r.codes, p.name, pp.title
+        FROM order_redeems r
+        JOIN products p ON r.product_id = p.product_id
+        JOIN order_details d ON d.order_id = r.order_id AND d.product_id = r.product_id
+        JOIN product_prices pp ON d.package_id = pp.id
+        WHERE r.order_id = ?
+    ");
+    $fetchRedeem->execute([$order_id]);
+    while ($r = $fetchRedeem->fetch(PDO::FETCH_ASSOC)) {
+        $keyLabel = $r['name'] . ' (' . $r['title'] . ')';
+        $redeemCodes[$keyLabel] = explode(',', $r['codes']);
     }
 }
 ?>
