@@ -1,0 +1,14 @@
+ # Prevent execution of PHP and other scripts in uploads
+ <FilesMatch "\.(php|php5|phtml|phar|pl|py|jsp|asp|aspx)$">
+   Require all denied
+ </FilesMatch>
+ Options -ExecCGI
+ AddType text/plain .php .php5 .phtml .phar
+# ป้องกันไม่ให้คนเข้าดูรายการไฟล์ทั้งหมดในโฟลเดอร์
+Options -Indexes
+
+# ปิดการรันสคริปต์ PHP, Perl, CGI, ASP, JS, PY
+php_flag engine off
+
+# บังคับให้ไฟล์อันตรายถูกเสิร์ฟเป็นข้อความธรรมดา (ไม่รัน)
+AddType text/plain .php .php3 .phtml .pl .cgi .asp .aspx .js .sh .py
